@@ -1,16 +1,22 @@
-﻿//  Copyright 2007-2016 Portland State University
-//  Author: Austen Ruzicka (and Robert Scheller)
+﻿// Copyright 2007-2016 Portland State University
+// Authors: Austen Ruzicka and Robert Scheller
 
-using Landis.Core;
+// NOTE: DoublePixel --> Landis.SpatialModeling
+// NOTE: IInputRaster --> Landis.SpatialModeling
+// NOTE: Site --> Landis.SpatialModeling
+// NOTE: SiteVars --> Landis.Library.PnETCohorts
+
+using System;
+using System.IO;
+// using Landis.Core;
 using Landis.Library.PnETCohorts;
 using Landis.SpatialModeling;
-using Landis.Utilities;
-using System.IO;
+// using Landis.Utilities;
 
 namespace Landis.Extension.Succession.BiomassPnET
 {
     /// <summary>
-    /// Methods to read maps in lieu of spin-up
+    /// Methods to read maps instead of using domain spin-up
     /// </summary>
     public static class MapReader
     {
@@ -22,7 +28,6 @@ namespace Landis.Extension.Succession.BiomassPnET
         public static void ReadWoodyDebrisFromMap(string path)
         {
             IInputRaster<DoublePixel> map = MakeDoubleMap(path);
-
             using (map)
             {
                 DoublePixel pixel = map.BufferPixel;
@@ -46,7 +51,6 @@ namespace Landis.Extension.Succession.BiomassPnET
         public static void ReadLitterFromMap(string path)
         {
             IInputRaster<DoublePixel> map = MakeDoubleMap(path);
-
             using (map)
             {
                 DoublePixel pixel = map.BufferPixel;
@@ -60,7 +64,6 @@ namespace Landis.Extension.Succession.BiomassPnET
                             throw new InputValueException(mapValue.ToString(),
                                                           "Litter value {0} is not between {1:0.0} and {2:0.0}. Site_Row={3:0}, Site_Column={4:0}",
                                                           mapValue, minLitter, maxLitter, site.Location.Row, site.Location.Column);
-
                         SiteVars.Litter[site].InitialMass = mapValue;
                         SiteVars.Litter[site].Mass = mapValue;
                     }
@@ -71,25 +74,21 @@ namespace Landis.Extension.Succession.BiomassPnET
         private static IInputRaster<DoublePixel> MakeDoubleMap(string path)
         {
             PlugIn.ModelCore.UI.WriteLine("  Read in data from {0}", path);
-
             IInputRaster<DoublePixel> map;
-
             try
             {
                 map = PlugIn.ModelCore.OpenRaster<DoublePixel>(path);
             }
             catch (FileNotFoundException)
             {
-                string mesg = string.Format("Error: The file {0} does not exist", path);
-                throw new System.ApplicationException(mesg);
+                string msg = string.Format("Error: The file {0} does not exist", path);
+                throw new ApplicationException(msg);
             }
-
             if (map.Dimensions != PlugIn.ModelCore.Landscape.Dimensions)
             {
-                string mesg = string.Format("Error: The input map {0} does not have the same dimension (row, column) as the scenario ecoregions map", path);
-                throw new System.ApplicationException(mesg);
+                string msg = string.Format("Error: The input map {0} does not have the same dimension (row, column) as the scenario ecoregions map", path);
+                throw new System.ApplicationException(msg);
             }
-
             return map;
         }
     }
