@@ -1,10 +1,11 @@
 ﻿// NOTE: ActiveSite --> Landis.SpatialModeling
 // NOTE: Location --> Landis.SpatialModeling
+// NOTE: Parameter --> Landis.Library.PnETCohorts
 
 using System;
 using System.Collections.Generic;
 // using System.Linq;
-// using Landis.Library.PnETCohorts;
+using Landis.Library.PnETCohorts;
 using Landis.SpatialModeling;
 
 namespace Landis.Extension.Succession.BiomassPnET
