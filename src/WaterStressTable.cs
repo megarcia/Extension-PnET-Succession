@@ -1,4 +1,6 @@
-﻿using Landis.Core;
+﻿/// this file is functionally empty -- will be deprecated and removed.
+
+using Landis.Core;
 using System;
 using System.Linq;
 using System.Collections.Generic;

@@ -1,4 +1,7 @@
-﻿using Landis.Library.PnETCohorts;
+﻿/// there's no reason for this file to exist when using the
+/// PnET-Cohort Library -- will be deprecated and removed.
+
+using Landis.Library.PnETCohorts;
 using System;
 using System.Collections.Generic;
 
