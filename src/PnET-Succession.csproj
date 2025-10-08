@@ -3,7 +3,7 @@
   <PropertyGroup>
     <RootNamespace>Landis.Extension.Succession.BiomassPnET</RootNamespace>
     <AssemblyName>Landis.Extension.Succession.BiomassPnET-v6</AssemblyName>
-    <AssemblyTitle>Landis.Extension.Succession.BiomassPnET-v5</AssemblyTitle>
+    <AssemblyTitle>Landis.Extension.Succession.BiomassPnET-v6</AssemblyTitle>
     <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
     <AssemblyVersion>6.0.1</AssemblyVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -59,14 +59,14 @@
     <Reference Include="Landis.Library.Parameters-v2">
       <HintPath>lib\Landis.Library.Parameters-v2.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.Library.PnETCohorts-v2">
-      <HintPath>lib\Landis.Library.PnETCohorts-v2.dll</HintPath>
-    </Reference>
     <Reference Include="Landis.Library.Succession-v9">
       <HintPath>lib\Landis.Library.Succession-v9.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.UniversalCohorts-v1">
       <HintPath>lib\Landis.Library.UniversalCohorts-v1.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.PnETCohorts-v3">
+      <HintPath>lib\Landis.Library.PnETCohorts-v3.dll</HintPath>
     </Reference>
   </ItemGroup>
 
