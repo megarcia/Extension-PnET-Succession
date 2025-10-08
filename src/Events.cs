@@ -1,4 +1,7 @@
-﻿using Landis.Core;
+﻿/// the only class and method in this file are unreferenced -- 
+/// will be deprecated and removed.
+
+using Landis.Core;
 using Landis.Library.PnETCohorts;
 using Landis.SpatialModeling;
 
