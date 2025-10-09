@@ -50,7 +50,7 @@
 // NOTE: Climate --> Landis.Library.Climate
 // NOTE: Cohort --> Library.PnETCohorts
 // NOTE: Constants --> Library.PnETCohorts
-// NOTE: DeathEventArgs --> Library.PnETCohorts --> Library.UniversalCohorts.DeathEventArgs 
+// NOTE: DeathEventArgs --> Library.UniversalCohorts 
 // NOTE: Directory --> Landis.Utilities
 // NOTE: ExtensionType --> Landis.Core
 // NOTE: Globals --> Library.PnETCohorts
@@ -86,6 +86,7 @@ using Landis.Library.PnETCohorts;
 using Landis.Library.Succession;
 using Landis.Library.Succession.DensitySeeding;
 using Landis.SpatialModeling;
+using Landis.Library.UniversalCohorts;
 using Landis.Utilities;
 
 namespace Landis.Extension.Succession.BiomassPnET
