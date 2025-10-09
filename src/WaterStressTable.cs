@@ -1,4 +1,5 @@
-﻿/// this file is functionally empty -- will be deprecated and removed.
+﻿/// this file is functionally empty, and will be deprecated 
+/// and removed.
 
 using Landis.Core;
 using System;
