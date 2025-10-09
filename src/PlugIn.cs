@@ -174,7 +174,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             if (Names.TryGetParameter(Names.DisturbanceReductions, out DisturbanceReductionsParameterFile))
             {
                 Allocation.Initialize(DisturbanceReductionsParameterFile.Value, Names.parameters);
-                Cohort.AgeOnlyDeathEvent += DisturbanceReductions.Events.CohortDied;
+                Cohort.AgeOnlyDeathEvent += Mortality.CohortDied;
             }
             //---------------SaxtonAndRawlsParameterFile
             if (Names.parameters.ContainsKey(PressureHeadSaxton_Rawls.SaxtonAndRawlsParameters) == false)
