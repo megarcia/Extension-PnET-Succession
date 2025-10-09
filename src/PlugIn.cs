@@ -293,15 +293,13 @@ namespace Landis.Extension.Succession.BiomassPnET
             string InitialCommunitiesMapFile = Names.GetParameter(Names.InitialCommunitiesMap).Value;
             InitialCommunitiesSpinup = Names.GetParameter(Names.InitialCommunitiesSpinup).Value;
             MinFolRatioFactor = ((Parameter<float>)Names.GetParameter(Names.MinFolRatioFactor, 0, float.MaxValue)).Value;
-            Parameter<string> LitterMapFile;
-            bool litterMapFile = Names.TryGetParameter(Names.LitterMap, out LitterMapFile);
-            Parameter<string> WoodyDebrisMapFile;
-            bool woodyDebrisMapFile = Names.TryGetParameter(Names.WoodyDebrisMap, out WoodyDebrisMapFile);
+            bool leafLitterMapFile = Names.TryGetParameter(Names.LeafLitterMap, out Parameter<string> LeafLitterMapFile);
+            if (leafLitterMapFile)
+                MapReader.ReadLeafLitterFromMap(LitterMapFile.Value);
+            bool woodDebrisMapFile = Names.TryGetParameter(Names.WoodDebrisMap, out Parameter<string> WoodDebrisMapFile);
+            if (woodDebrisMapFile)
+                MapReader.ReadWoodDebrisFromMap(WoodyDebrisMapFile.Value);
             InitializeSites(InitialCommunitiesTxtFile, InitialCommunitiesMapFile, ModelCore);
-            if (litterMapFile)
-                MapReader.ReadLitterFromMap(LitterMapFile.Value);
-            if (woodyDebrisMapFile)
-                MapReader.ReadWoodyDebrisFromMap(WoodyDebrisMapFile.Value);
             // Convert PnET cohorts to biomasscohorts
             foreach (ActiveSite site in ModelCore.Landscape)
             {

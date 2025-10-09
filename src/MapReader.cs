@@ -1,8 +1,8 @@
-﻿// Copyright 2007-2016 Portland State University
-// Authors: Austen Ruzicka and Robert Scheller
+﻿// Original Authors: Austen Ruzicka and Robert Scheller
 
 // NOTE: DoublePixel --> Landis.SpatialModeling
 // NOTE: IInputRaster --> Landis.SpatialModeling
+// NOTE: InputValueException --> Landis.Utilities
 // NOTE: Site --> Landis.SpatialModeling
 // NOTE: SiteVars --> Landis.Library.PnETCohorts
 
@@ -10,8 +10,7 @@ using System;
 using System.IO;
 // using Landis.Core;
 using Landis.Library.PnETCohorts;
-using Landis.SpatialModeling;
-// using Landis.Utilities;
+using Landis.SpatialModeling;using Landis.Utilities;
 
 namespace Landis.Extension.Succession.BiomassPnET
 {
@@ -20,12 +19,12 @@ namespace Landis.Extension.Succession.BiomassPnET
     /// </summary>
     public static class MapReader
     {
-        static private double maxLitter = 5176.124;
-        static private double maxWoodyDebris = 95007.64;
-        static private double minLitter = 0;
-        static private double minWoodyDebris = 0;
+        static private double maxLeafLitter = 5176.124;
+        static private double maxWoodDebris = 95007.64;
+        static private double minLeafLitter = 0;
+        static private double minWoodDebris = 0;
 
-        public static void ReadWoodyDebrisFromMap(string path)
+        public static void ReadWoodDebrisFromMap(string path)
         {
             IInputRaster<DoublePixel> map = MakeDoubleMap(path);
             using (map)
@@ -37,18 +36,18 @@ namespace Landis.Extension.Succession.BiomassPnET
                     int mapValue = (int)pixel.MapCode.Value;
                     if (site.IsActive)
                     {
-                        if (mapValue < minWoodyDebris || mapValue > maxWoodyDebris)
+                        if (mapValue < minWoodDebris || mapValue > maxWoodDebris)
                             throw new InputValueException(mapValue.ToString(),
-                                                          "Down dead value {0} is not between {1:0.0} and {2:0.0}. Site_Row={3:0}, Site_Column={4:0}",
-                                                          mapValue, minWoodyDebris, maxWoodyDebris, site.Location.Row, site.Location.Column);
-                        SiteVars.WoodyDebris[site].InitialMass = mapValue;
-                        SiteVars.WoodyDebris[site].Mass = mapValue;
+                                                          "Wood debris value {0} is not between {1:0.0} and {2:0.0}. Site_Row={3:0}, Site_Column={4:0}",
+                                                          mapValue, minWoodDebris, maxWoodDebris, site.Location.Row, site.Location.Column);
+                        SiteVars.WoodDebris[site].InitialMass = mapValue;
+                        SiteVars.WoodDebris[site].Mass = mapValue;
                     }
                 }
             }
         }
 
-        public static void ReadLitterFromMap(string path)
+        public static void ReadLeafLitterFromMap(string path)
         {
             IInputRaster<DoublePixel> map = MakeDoubleMap(path);
             using (map)
@@ -60,12 +59,12 @@ namespace Landis.Extension.Succession.BiomassPnET
                     int mapValue = (int)pixel.MapCode.Value;
                     if (site.IsActive)
                     {
-                        if (mapValue < minLitter || mapValue > maxLitter)
+                        if (mapValue < minLeafLitter || mapValue > maxLeafLitter)
                             throw new InputValueException(mapValue.ToString(),
-                                                          "Litter value {0} is not between {1:0.0} and {2:0.0}. Site_Row={3:0}, Site_Column={4:0}",
-                                                          mapValue, minLitter, maxLitter, site.Location.Row, site.Location.Column);
-                        SiteVars.Litter[site].InitialMass = mapValue;
-                        SiteVars.Litter[site].Mass = mapValue;
+                                                          "Leaf litter value {0} is not between {1:0.0} and {2:0.0}. Site_Row={3:0}, Site_Column={4:0}",
+                                                          mapValue, minLeafLitter, maxLeafLitter, site.Location.Row, site.Location.Column);
+                        SiteVars.LeafLitter[site].InitialMass = mapValue;
+                        SiteVars.LeafLitter[site].Mass = mapValue;
                     }
                 }
             }
@@ -87,7 +86,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             if (map.Dimensions != PlugIn.ModelCore.Landscape.Dimensions)
             {
                 string msg = string.Format("Error: The input map {0} does not have the same dimension (row, column) as the scenario ecoregions map", path);
-                throw new System.ApplicationException(msg);
+                throw new ApplicationException(msg);
             }
             return map;
         }
