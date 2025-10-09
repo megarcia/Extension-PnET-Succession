@@ -23,6 +23,6 @@ namespace Landis.Extension.Succession.BiomassPnET
         float O3 { get; }
         float SPEI { get; }
         
-        SpeciesPnETVariables this[string species] { get; }
+        PnETSpeciesVars this[string species] { get; }
     }
 }

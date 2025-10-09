@@ -275,9 +275,9 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         #endregion
 
-        private Dictionary<string, SpeciesPnETVariables> speciesVariables;
+        private Dictionary<string, PnETSpeciesVars> speciesVariables;
 
-        public SpeciesPnETVariables this[string species]
+        public PnETSpeciesVars this[string species]
         {
             get
             {
@@ -285,13 +285,13 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
         }
 
-        public EcoregionClimateVariables(IObservedClimate climate_dataset, DateTime Date, bool Wythers, bool DTemp, List<ISpeciesPnET> Species, float Latitude)
+        public EcoregionClimateVariables(IObservedClimate climate_dataset, DateTime Date, bool Wythers, bool DTemp, List<IPnETSpecies> Species, float Latitude)
         {
             
             this._date = Date;
             this.obs_clim = climate_dataset;
 
-            speciesVariables = new Dictionary<string, SpeciesPnETVariables>();
+            speciesVariables = new Dictionary<string, PnETSpeciesVars>();
 
             
             _tave = (float)0.5 * (climate_dataset.Tmin + climate_dataset.Tmax);
