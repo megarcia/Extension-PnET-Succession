@@ -16,6 +16,7 @@ using Landis.Library.PnETCohorts;
 // using Landis.SpatialModeling;
 
 namespace Landis.Extension.Succession.BiomassPnET
+{
     class Mortality
     {
         public static void CohortDied(object sender, DeathEventArgs eventArgs)
