@@ -145,7 +145,8 @@ namespace Landis.Extension.Succession.BiomassPnET
             sitesAndCommunities = new Dictionary<ActiveSite, ICommunity>();
         }
 
-        public override void LoadParameters(string InputParameterFile, ICore mCore)
+        public override void LoadParameters(string InputParameterFile,
+                                            ICore mCore)
         {
             ModelCore = mCore;
             Names.parameters.Add(Names.ExtensionName, new Parameter<string>(Names.ExtensionName, InputParameterFile));
@@ -173,7 +174,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             Parameter<string> DisturbanceReductionsParameterFile;
             if (Names.TryGetParameter(Names.DisturbanceReductions, out DisturbanceReductionsParameterFile))
             {
-                Allocation.Initialize(DisturbanceReductionsParameterFile.Value, Names.parameters);
+                Disturbance.Initialize(DisturbanceReductionsParameterFile.Value, Names.parameters);
                 Library.PnETCohorts.Cohort.AgeOnlyDeathEvent += Mortality.CohortDied;
             }
             //---------------SaxtonAndRawlsParameterFile
@@ -296,10 +297,10 @@ namespace Landis.Extension.Succession.BiomassPnET
             MinFolRatioFactor = ((Parameter<float>)Names.GetParameter(Names.MinFolRatioFactor, 0, float.MaxValue)).Value;
             bool leafLitterMapFile = Names.TryGetParameter(Names.LeafLitterMap, out Parameter<string> LeafLitterMapFile);
             if (leafLitterMapFile)
-                MapReader.ReadLeafLitterFromMap(LitterMapFile.Value);
+                MapReader.ReadLeafLitterFromMap(LeafLitterMapFile.Value);
             bool woodDebrisMapFile = Names.TryGetParameter(Names.WoodDebrisMap, out Parameter<string> WoodDebrisMapFile);
             if (woodDebrisMapFile)
-                MapReader.ReadWoodDebrisFromMap(WoodyDebrisMapFile.Value);
+                MapReader.ReadWoodDebrisFromMap(WoodDebrisMapFile.Value);
             InitializeSites(InitialCommunitiesTxtFile, InitialCommunitiesMapFile, ModelCore);
             // Convert PnET cohorts to biomasscohorts
             foreach (ActiveSite site in ModelCore.Landscape)
@@ -458,7 +459,10 @@ namespace Landis.Extension.Succession.BiomassPnET
                 throw new ApplicationException(string.Format("PARunits units are not 'umol' or 'W/m2'"));
         }
 
-        public void AddNewCohort(ISpecies species, ActiveSite site, string reproductionType, double biomassFrac = 1.0)
+        public void AddNewCohort(ISpecies species,
+                                 ActiveSite site,
+                                 string reproductionType,
+                                 double biomassFrac = 1.0)
         {
             IPnETSpecies spc = PnETSpecies[species];
             bool addCohort = true;
@@ -472,11 +476,11 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
             bool addSiteOutput = false;
             addSiteOutput = SiteOutputNames.ContainsKey(site) && addCohort;
-            Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, biomassFrac, false);
+            Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, biomassFrac, false, Timestep);
             if (((Parameter<bool>)Names.GetParameter(Names.CohortStacking)).Value)
             {
                 cohort.CanopyGrowingSpace = 1.0f;
-                cohort.CanopyLayerProp = 1.0f;
+                cohort.CanopyLayerFrac = 1.0f;
             }
             addCohort = SiteVars.SiteCohorts[site].AddNewCohort(cohort);
             if (addCohort)
@@ -536,7 +540,9 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
         }
 
-        public override void InitializeSites(string initialCommunitiesText, string initialCommunitiesMap, ICore modelCore)
+        public override void InitializeSites(string initialCommunitiesText,
+                                             string initialCommunitiesMap,
+                                             ICore modelCore)
         {
             ModelCore.UI.WriteLine("   Loading initial communities from file \"{0}\" ...", initialCommunitiesText);
             DatasetParser parser = new DatasetParser(Timestep, modelCore.Species, additionalCohortParameters, initialCommunitiesText);
@@ -581,10 +587,10 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         protected override void AgeCohorts(ActiveSite site,
                                            ushort years,
-                                           int? successionTimestep)
+                                           int? timestep)
         {
             // Date starts at 1/15/Year
-            DateTime date = new DateTime(StartDate.Year + ModelCore.CurrentTime - Timestep, 1, 15);
+            DateTime date = new DateTime(StartDate.Year + ModelCore.CurrentTime - timestep, 1, 15);
             DateTime EndDate = date.AddYears(years);
             IPnETEcoregionData PnETEcoregion = PnETEcoregionData.GetPnETEcoregion(ModelCore.Ecoregion[site]);
             List<IPnETEcoregionVars> climate_vars = UsingClimateLibrary ? PnETEcoregionData.GetClimateRegionData(PnETEcoregion, date, EndDate) : PnETEcoregionData.GetData(PnETEcoregion, date, EndDate);
@@ -608,7 +614,8 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         // This is a Delegate method to base succession.
         // Not used within PnET-Succession
-        public bool SufficientResources(ISpecies species, ActiveSite site)
+        public bool SufficientResources(ISpecies species,
+                                        ActiveSite site)
         {
             return true;
         }
@@ -616,11 +623,18 @@ namespace Landis.Extension.Succession.BiomassPnET
         /// <summary>
         /// Determines if a species can establish on a site.
         /// This is a Delegate method to base succession.
+        /// 
+        /// Matthew Garcia: (10.09.2025)
+        /// 
+        /// No, this method determines if a species *has* established 
+        /// on a site, not if it *can* establish. A species can
+        /// exist on a site that has become unsuitable for further 
+        /// establishment of new cohorts of the same species.
         /// </summary>
         public bool Establish(ISpecies species, ActiveSite site)
         {
             IPnETSpecies spc = PnETSpecies[species];
-            bool Establish = SiteVars.SiteCohorts[site].ProbEstablishment.HasEstablished(spc);
+            bool Establish = SiteVars.SiteCohorts[site].ProbEstablishment.IsEstablishedSpecies(spc);
             return Establish;
         }
 
@@ -629,7 +643,8 @@ namespace Landis.Extension.Succession.BiomassPnET
         /// (all conditions are satisfied).
         /// This is a Delegate method to base succession.
         /// </summary>
-        public bool PlantingEstablish(ISpecies species, ActiveSite site)
+        public bool PlantingEstablish(ISpecies species,
+                                      ActiveSite site)
         {
             return true;
         }
@@ -658,7 +673,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                     if (initialCommunity == null)
                         throw new ApplicationException(string.Format("Unknown map code for initial community: {0}", mapCode));
                     sitesAndCommunities.Add(activeSite, initialCommunity);
-                    uint key = Library.PnETCohorts.SiteCohorts.ComputeKey((ushort)initialCommunity.MapCode, Globals.ModelCore.Ecoregion[site].MapCode);
+                    uint key = Library.PnETCohorts.SiteCohorts.CalcKey((ushort)initialCommunity.MapCode, Globals.ModelCore.Ecoregion[site].MapCode);
                     if (! uniqueKeys.ContainsKey(key))
                     {
                         uniqueKeys.Add(key, activeSite);
@@ -666,7 +681,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                     }
                     else
                         processSecond.Add(activeSite);
-                    if (!allKeys.ContainsKey(activeSite))
+                    if (! allKeys.ContainsKey(activeSite))
                         allKeys.Add(activeSite, key);
                 }
             }
