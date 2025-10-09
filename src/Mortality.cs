@@ -12,7 +12,7 @@
 
 using Landis.Core;
 using Landis.Library.PnETCohorts;
-// using Landis.Library.UniversalCohorts;
+using Landis.Library.UniversalCohorts;
 // using Landis.SpatialModeling;
 
 namespace Landis.Extension.Succession.BiomassPnET
