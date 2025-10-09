@@ -5,7 +5,7 @@ namespace Landis.Extension.Succession.BiomassPnET
 {
     public class LocalOutput
     {
-        public static string PNEToutputsites;
+        public static string PnETOutputSites;
         private List<string> FileContent;
         public string FileName { get; private set; }
         public string SiteName { get; private set; }
@@ -14,7 +14,7 @@ namespace Landis.Extension.Succession.BiomassPnET
         public LocalOutput(string SiteName, string FileName, string Header)
         {
             this.SiteName = SiteName;
-            Path = "Output" + Path.DirectorySeparatorChar + PNEToutputsites + Path.DirectorySeparatorChar + SiteName + Path.DirectorySeparatorChar;
+            Path = "Output" + Path.DirectorySeparatorChar + PnETOutputSites + Path.DirectorySeparatorChar + SiteName + Path.DirectorySeparatorChar;
             this.FileName = FileName;
             if (File.Exists(Path + FileName))
                 File.Delete(Path + FileName);
