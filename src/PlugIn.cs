@@ -126,9 +126,9 @@ namespace Landis.Extension.Succession.BiomassPnET
         {
             get
             {
-                string defaultPath = Path.Combine(Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly().Location), "Defaults");
+                string defaultPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Defaults");
                 // If Linux, correct the path string
-                if (Runtime.InteropServices.RuntimeInformation.IsOSPlatform(Runtime.InteropServices.OSPlatform.Linux))
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
                     defaultPath = defaultPath.Replace('\\', '/');
                 return defaultPath;
             }
@@ -177,12 +177,12 @@ namespace Landis.Extension.Succession.BiomassPnET
                 Cohort.AgeOnlyDeathEvent += Mortality.CohortDied;
             }
             //---------------SaxtonAndRawlsParameterFile
-            if (Names.parameters.ContainsKey(PressureHeadSaxton_Rawls.SaxtonAndRawlsParameters) == false)
+            if (Names.parameters.ContainsKey(Hydrology_SaxtonRawls.SaxtonAndRawlsParameters) == false)
             {
-                Parameter<string> SaxtonAndRawlsParameterFile = new Parameter<string>(PressureHeadSaxton_Rawls.SaxtonAndRawlsParameters, (string)PnETDefaultsFolder + System.IO.Path.DirectorySeparatorChar + "SaxtonAndRawlsParameters.txt");
-                Names.parameters.Add(PressureHeadSaxton_Rawls.SaxtonAndRawlsParameters, SaxtonAndRawlsParameterFile);
+                Parameter<string> SaxtonAndRawlsParameterFile = new Parameter<string>(Hydrology_SaxtonRawls.SaxtonAndRawlsParameters, (string)PnETDefaultsFolder + System.IO.Path.DirectorySeparatorChar + "SaxtonAndRawlsParameters.txt");
+                Names.parameters.Add(Hydrology_SaxtonRawls.SaxtonAndRawlsParameters, SaxtonAndRawlsParameterFile);
             }
-            Dictionary<string, Parameter<string>> SaxtonAndRawlsParameters = Names.LoadTable(PressureHeadSaxton_Rawls.SaxtonAndRawlsParameters, null, PressureHeadSaxton_Rawls.ParameterNames);
+            Dictionary<string, Parameter<string>> SaxtonAndRawlsParameters = Names.LoadTable(Hydrology_SaxtonRawls.SaxtonAndRawlsParameters, null, Hydrology_SaxtonRawls.ParameterNames);
             foreach (string key in SaxtonAndRawlsParameters.Keys)
                 if (Names.parameters.ContainsKey(key))
                     throw new Exception("Parameter " + key + " was provided twice");
@@ -224,7 +224,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             Cohort.DeathEvent += DeathEvent;
             StartDate = new DateTime(((Parameter<int>)Names.GetParameter(Names.StartYear)).Value, 1, 15);
             Globals.InitializeCore(ModelCore, ((Parameter<ushort>)Names.GetParameter(Names.IMAX)).Value, StartDate);
-            PnETPnETEcoregionData.Initialize();
+            PnETEcoregionData.Initialize();
             SiteVars.Initialize();
             Directory.EnsureExists("output");
             Timestep = ((Parameter<int>)Names.GetParameter(Names.Timestep)).Value;
