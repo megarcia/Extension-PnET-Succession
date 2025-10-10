@@ -14,7 +14,7 @@ namespace Landis.Extension.Succession.BiomassPnET
         public LocalOutput(string SiteName, string FileName, string Header)
         {
             this.SiteName = SiteName;
-            Path = "Output" + Path.DirectorySeparatorChar + PnETOutputSites + Path.DirectorySeparatorChar + SiteName + Path.DirectorySeparatorChar;
+            Path = "Output" + System.IO.Path.DirectorySeparatorChar + PnETOutputSites + System.IO.Path.DirectorySeparatorChar + SiteName + System.IO.Path.DirectorySeparatorChar;
             this.FileName = FileName;
             if (File.Exists(Path + FileName))
                 File.Delete(Path + FileName);
@@ -33,7 +33,7 @@ namespace Landis.Extension.Succession.BiomassPnET
         {
             try
             {
-                StreamWriter sw = new StreamWriter(Path.Combine(Path, FileName), true);
+                StreamWriter sw = new StreamWriter(System.IO.Path.Combine(Path, FileName), true);
                 foreach (string line in FileContent)
                     sw.WriteLine(line);
                 sw.Close();
@@ -42,7 +42,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
             catch (IOException e)
             {
-                PlugIn.ModelCore.UI.WriteLine("Cannot write to " + Path.Combine(Path, FileName) + " " + e.Message);
+                PlugIn.ModelCore.UI.WriteLine("Cannot write to " + System.IO.Path.Combine(Path, FileName) + " " + e.Message);
             }
         }
     }
