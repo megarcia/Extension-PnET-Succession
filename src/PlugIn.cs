@@ -476,7 +476,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
             bool addSiteOutput = false;
             addSiteOutput = SiteOutputNames.ContainsKey(site) && addCohort;
-            Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, biomassFrac, false, Timestep);
+            Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, biomassFrac, false, (byte)Timestep);
             if (((Parameter<bool>)Names.GetParameter(Names.CohortStacking)).Value)
             {
                 cohort.CanopyGrowingSpace = 1.0f;
@@ -587,10 +587,10 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         protected override void AgeCohorts(ActiveSite site,
                                            ushort years,
-                                           int? timestep)
+                                           byte timestep)
         {
             // Date starts at 1/15/Year
-            DateTime date = new DateTime(StartDate.Year + ModelCore.CurrentTime - timestep, 1, 15);
+            DateTime date = new DateTime(StartDate.Year + ModelCore.CurrentTime - (int)timestep, 1, 15);
             DateTime EndDate = date.AddYears(years);
             IPnETEcoregionData PnETEcoregion = PnETEcoregionData.GetPnETEcoregion(ModelCore.Ecoregion[site]);
             List<IPnETEcoregionVars> climate_vars = UsingClimateLibrary ? PnETEcoregionData.GetClimateRegionData(PnETEcoregion, date, EndDate) : PnETEcoregionData.GetData(PnETEcoregion, date, EndDate);
