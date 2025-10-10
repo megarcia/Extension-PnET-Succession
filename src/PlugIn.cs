@@ -587,7 +587,7 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         protected override void AgeCohorts(ActiveSite site,
                                            ushort years,
-                                           byte timestep)
+                                           int? timestep)
         {
             // Date starts at 1/15/Year
             DateTime date = new DateTime(StartDate.Year + ModelCore.CurrentTime - (int)timestep, 1, 15);
