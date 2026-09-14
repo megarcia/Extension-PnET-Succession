@@ -1,4 +1,10 @@
-﻿using Landis.Library.PnETCohorts;
+﻿//MG20260914 This class was the original way to feed climate information to
+//           PnET-Succession but is now redundant with the new LANDIS-II
+//           Climate Library and causes several redundancies in the PnET 
+//           Cohort Library. This class and its counterpart functionality
+//           in the PnET Cohort Library will be deprecated. 
+
+using Landis.Library.PnETCohorts;
 using System;
 using System.Collections.Generic;
 
