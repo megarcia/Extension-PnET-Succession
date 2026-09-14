@@ -1,4 +1,14 @@
-﻿using System;
+﻿//MG20260914 This class is almost entirely redundant with the Permafrost
+//           class in PnETCohorts, except for one little return variable
+//           that is more up-to-date there. This class is called in the
+//           Extension-PnET-Succession code in only one place in PlugIn.cs,
+//           and even then only after a lot of code that is redundant with
+//           this class and with the Library-PnET-Cohorts/Permafrost class.
+//           All of that code in PlugIn.cs will be moved into PnETCohorts,
+//           making this Permafrost class redundant and unnecessary, and
+//           this file will be deprecated.
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Landis.Library.PnETCohorts;

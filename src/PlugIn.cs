@@ -317,7 +317,16 @@ namespace Landis.Extension.Succession.BiomassPnET
                     { 
                         if(SiteVars.MonthlySoilTemp[site].Count() == 0)
                         { 
-                            //MG20260911 all of these calculations and assignments will soon be moved to a new Soil Class in the PnET Cohort Library
+                            //MG20260911 All of these calculations and assignments will soon be moved 
+                            //           to a new Soils Class in the PnET Cohort Library.
+                            //MG20260914 This code is almost entirely redundant with the Permafrost
+                            //           class both here and in PnETCohorts, except for one little
+                            //           return variable that is more up-to-date in PnETCohorts. The
+                            //           (local) Permafrost class is called in only one place here.
+                            //           All of this code in PlugIn.cs will be moved into PnETCohorts
+                            //           and the Initialization calculations needed here will be obtained
+                            //           from there. The local (Extension-level) Permafrost class will 
+                            //           be deprecated and removed.
 
                             // Soil calcs for soil temp
                             float waterContent = hydrology.Water;// volumetric m/m
