@@ -61,7 +61,7 @@ using Landis.Library.InitialCommunities.Universal;
 using Landis.Library.PnETCohorts;
 using Landis.Library.Succession;
 using Landis.Library.Succession.DensitySeeding;
-using Landis.Library.UniversalCohorts;
+// using Landis.Library.UniversalCohorts;
 using Landis.SpatialModeling;
 
 namespace Landis.Extension.Succession.BiomassPnET
@@ -85,7 +85,7 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         MyClock m = null;
 
-        public void DeathEvent(object sender, Library.UniversalCohorts.DeathEventArgs eventArgs)
+        public void DeathEvent(object sender, Landis.Library.UniversalCohorts.DeathEventArgs eventArgs)
         {
             ExtensionType disturbanceType = eventArgs.DisturbanceType;
             if (disturbanceType != null)
