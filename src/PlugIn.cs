@@ -61,7 +61,6 @@ using Landis.Library.InitialCommunities.Universal;
 using Landis.Library.PnETCohorts;
 using Landis.Library.Succession;
 using Landis.Library.Succession.DensitySeeding;
-// using Landis.Library.UniversalCohorts;
 using Landis.SpatialModeling;
 
 namespace Landis.Extension.Succession.BiomassPnET
