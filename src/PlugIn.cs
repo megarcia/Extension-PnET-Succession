@@ -333,12 +333,12 @@ namespace Landis.Extension.Succession.BiomassPnET
                             float waterContent = hydrology.Water;// volumetric m/m
                             float porosity = ecoregion.Porosity;  // volumetric m/m 
                             float ga = 0.035F + 0.298F * (waterContent / porosity);
-                            float Fa = ((2.0F / 3.0F) / (1.0F + ga * ((Constants.lambda_a / Constants.lambda_w) - 1.0F))) + ((1.0F / 3.0F) / (1.0F + (1.0F - 2.0F * ga) * ((Constants.lambda_a / Constants.lambda_w) - 1.0F))); // ratio of air temp gradient
+                            float Fa = ((2.0F / 3.0F) / (1.0F + ga * ((Constants.ThermalConductivityAir_Watts / Constants.ThermalConductivityWater_Watts) - 1.0F))) + ((1.0F / 3.0F) / (1.0F + (1.0F - 2.0F * ga) * ((Constants.ThermalConductivityAir_Watts / Constants.ThermalConductivityWater_Watts) - 1.0F))); // ratio of air temp gradient
                             float Fs = PressureHeadSaxton_Rawls.GetFs(ecoregion.SoilType);
                             float lambda_s = PressureHeadSaxton_Rawls.GetLambda_s(ecoregion.SoilType);
-                            float lambda_theta = (Fs * (1.0F - porosity) * lambda_s + Fa * (porosity - waterContent) * Constants.lambda_a + waterContent * Constants.lambda_w) / (Fs * (1.0F - porosity) + Fa * (porosity - waterContent) + waterContent); //soil thermal conductivity (kJ/m/d/K)
+                            float lambda_theta = (Fs * (1.0F - porosity) * lambda_s + Fa * (porosity - waterContent) * Constants.ThermalConductivityAir_Watts + waterContent * Constants.ThermalConductivityWater_Watts) / (Fs * (1.0F - porosity) + Fa * (porosity - waterContent) + waterContent); //soil thermal conductivity (kJ/m/d/K)
                             float D = lambda_theta / PressureHeadSaxton_Rawls.GetCTheta(ecoregion.SoilType);  //m2/day
-                            float Dmms = D * 1000000 / 86400; //mm2/s
+                            float Dmms = D * Constants.Million / Constants.SecondsPerDay; //mm2/s
                             float d = (float)Math.Sqrt(2 * Dmms / Constants.omega);
                             float maxDepth = ecoregion.RootingDepth + ecoregion.LeakageFrostDepth;
                             float bottomFreezeDepth = maxDepth / 1000;
@@ -359,10 +359,8 @@ namespace Landis.Extension.Succession.BiomassPnET
                                     float DRz_snow = 1F; // Assume no snow in initialization
 
                                     float mossDepth = ecoregion.MossDepth;
-                                    float cv = 2500; // heat capacity moss - kJ/m3/K (Sazonova and Romanovsky 2003)
-                                    float lambda_moss = 432; // kJ/m/d/K - converted from 0.2 W/mK (Sazonova and Romanovsky 2003)
-                                    float moss_diffusivity = lambda_moss / cv;
-                                    float damping_moss = (float)Math.Sqrt((2.0F * moss_diffusivity) / Constants.omega);
+                                    float moss_diffusivity = Constants.ThermalConductivityMoss / Constants.HeatCapacityMoss;
+                                    float damping_moss = (float)Math.Sqrt(2.0F * moss_diffusivity / Constants.omega);
                                     float DRz_moss = (float)Math.Exp(-1.0F * mossDepth * damping_moss); // Damping ratio for moss - adapted from Kang et al. (2000) and Liang et al. (2014)
 
 
