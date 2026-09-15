@@ -66,7 +66,7 @@ using Landis.SpatialModeling;
 
 namespace Landis.Extension.Succession.BiomassPnET
 {
-    public class PlugIn : Landis.Library.Succession.ExtensionBase 
+    public class PlugIn : Library.Succession.ExtensionBase 
     {
         public static SpeciesPnET SpeciesPnET;
         public static DateTime Date;
@@ -85,7 +85,7 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         MyClock m = null;
 
-        public void DeathEvent(object sender, UniversalCohorts.DeathEventArgs eventArgs)
+        public void DeathEvent(object sender, Library.UniversalCohorts.DeathEventArgs eventArgs)
         {
             ExtensionType disturbanceType = eventArgs.DisturbanceType;
             if (disturbanceType != null)

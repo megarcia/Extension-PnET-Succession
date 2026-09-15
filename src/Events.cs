@@ -7,7 +7,7 @@ namespace Landis.Extension.Succession.BiomassPnET.DisturbanceReductions
 {
     class Events
     {
-        public static void CohortDied(object sender, UniversalCohorts.DeathEventArgs eventArgs)
+        public static void CohortDied(object sender, Library.UniversalCohorts.DeathEventArgs eventArgs)
         {
             ExtensionType disturbanceType = eventArgs.DisturbanceType;
         }
