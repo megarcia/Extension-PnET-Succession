@@ -327,6 +327,8 @@ namespace Landis.Extension.Succession.BiomassPnET
                             //           and the Initialization calculations needed here will be obtained
                             //           from there. The local (Extension-level) Permafrost class will 
                             //           be deprecated and removed.
+                            //MG20260922 Call to Permafrost class redirected to PnETCohorts.Soils class.
+                            //           Permafrost.cs is now redundant, deprecated, and removed.
 
                             // Soil calcs for soil temp
                             float waterContent = hydrology.Water;// volumetric m/m
@@ -439,7 +441,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                                         else
                                             testDepth += 0.25F;
                                     }
-                                    SiteVars.MonthlySoilTemp[site][m] = Permafrost.CalculateMonthlySoilTemps(depthTempDict, ecoregion, 0, 0, hydrology, (float)monthlyAirT[m]);
+                                    SiteVars.MonthlySoilTemp[site][m] = Library.PnETCohorts.Soils.CalculateMonthlySoilTemps(depthTempDict, ecoregion, 0, 0, hydrology, (float)monthlyAirT[m]);
                                 }
                             }
                         }
