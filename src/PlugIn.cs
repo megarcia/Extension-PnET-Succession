@@ -281,7 +281,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             // Cohorts must be created before the base class is initialized
             // because the base class's reproduction module uses the core's
             // SuccessionCohorts property in its Initialization method.
-            Library.UniversalCohorts.Cohorts.Initialize(Timestep, new CohortBiomass());
+            Library.UniversalCohorts.Cohorts.Initialize(Timestep, new BiomassCalculator());
             //MG20261012 end addition
 
             // Initialize Reproduction routines:
