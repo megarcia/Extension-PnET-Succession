@@ -445,7 +445,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                 else
                     SiteVars.ExtremeMinTemp[site] = 999;
             }
-            // SiteVars.UpdateUniversalCohorts();  //MG20260911 added call 
+            SiteVars.UpdateUniversalCohorts();  //MG20260911 added call 
         }
 
         /// <summary>
@@ -595,7 +595,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             if (Timestep > 0)
                 ClimateRegionData.SetAllEcoregionsFutureAnnualClimate(ModelCore.CurrentTime);
             base.Run();
-            // SiteVars.UpdateUniversalCohorts();  //MG20260911 end of PnET operations step, time to update
+            SiteVars.UpdateUniversalCohorts();  //MG20260911 end of PnET operations step, time to update
         }
 
         // Required delegate method to base succession - not used within PnET-Succession
