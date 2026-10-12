@@ -272,6 +272,17 @@ namespace Landis.Extension.Succession.BiomassPnET
                 throw new Exception("PARunits are not 'umol' or 'W/m2'.");
             InitializeClimateLibrary(StartDate.Year); // John McNabb: initialize climate library after EcoregionPnET has been initialized
 
+            //MG20261012 The following line was not present -- is this the 
+            //           problem in the connection between PnETCohorts and 
+            //           UniversalCohorts? This is taken from other Succession
+            //           Extension PlugIn.cs files (Biomass, NECN, ForC).
+            //
+            // Cohorts must be created before the base class is initialized
+            // because the base class's reproduction module uses the core's
+            // SuccessionCohorts property in its Initialization method.
+            Library.UniversalCohorts.Cohorts.Initialize(Timestep, new CohortBiomass());
+            //MG20261012 end addition
+
             // Initialize Reproduction routines:
             Reproduction.SufficientResources = SufficientResources;
             Reproduction.Establish = Establish;
@@ -445,7 +456,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                 else
                     SiteVars.ExtremeMinTemp[site] = 999;
             }
-            SiteVars.UpdateUniversalCohorts();  //MG20260911 added call 
+            // SiteVars.UpdateUniversalCohorts();  //MG20260911 added call 
         }
 
         /// <summary>
@@ -595,7 +606,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             if (Timestep > 0)
                 ClimateRegionData.SetAllEcoregionsFutureAnnualClimate(ModelCore.CurrentTime);
             base.Run();
-            SiteVars.UpdateUniversalCohorts();  //MG20260911 end of PnET operations step, time to update
+            // SiteVars.UpdateUniversalCohorts();  //MG20260911 end of PnET operations step, time to update
         }
 
         // Required delegate method to base succession - not used within PnET-Succession
