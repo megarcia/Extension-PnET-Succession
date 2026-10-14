@@ -84,7 +84,7 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         MyClock m = null;
 
-        public void DeathEvent(object sender, Landis.Library.UniversalCohorts.DeathEventArgs eventArgs)
+        public void DeathEvent(object sender, Library.UniversalCohorts.DeathEventArgs eventArgs)
         {
             ExtensionType disturbanceType = eventArgs.DisturbanceType;
             if (disturbanceType != null)
@@ -273,15 +273,24 @@ namespace Landis.Extension.Succession.BiomassPnET
                 throw new Exception("PARunits are not 'umol' or 'W/m2'.");
             InitializeClimateLibrary(StartDate.Year); // John McNabb: initialize climate library after EcoregionPnET has been initialized
 
-            //MG20261012 The following line was not present -- is this the 
-            //           problem in the connection between PnETCohorts and 
-            //           UniversalCohorts? This is taken from other Succession
-            //           Extension PlugIn.cs files (Biomass, NECN, ForC).
+            //MG20261014 The following line was not present in PnET-Succession
+            //           as it is in the other Succession Extension PlugIn.cs
+            //           files (Biomass, NECN, ForC). Could this be part of the 
+            //           problem in maintaining connections between PnETCohorts and 
+            //           UniversalCohorts? The call is to:
+            //               public static void Initialize(int successionTimeStep,
+            //                                             ICalculator biomassCalculator)
+            //           so the "Timestep" argument seems correct but CohortBiomass()
+            //           is no longer here as in the other Succession extensions, and
+            //           everything connected to the type ICalculator has been moved to
+            //           the PnETCohorts Library. Need to figure out a proper replacement
+            //           for the "CohortBiomass()" argument with the proper type and all
+            //           the attendant variables/methods.
             //
             // Cohorts must be created before the base class is initialized
             // because the base class's reproduction module uses the core's
             // SuccessionCohorts property in its Initialization method.
-            // // Library.UniversalCohorts.Cohorts.Initialize(Timestep, new BiomassCalculator);
+            Library.UniversalCohorts.Cohorts.Initialize(Timestep, new CohortBiomass());  // replace CohortBiomass() with ???
             //MG20261012 end addition
 
             // Initialize Reproduction routines:
