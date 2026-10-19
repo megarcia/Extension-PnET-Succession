@@ -114,8 +114,8 @@ namespace Landis.Extension.Succession.BiomassPnET
         /// We don't actually want this method to change anything via Universal Cohorts--
         /// all biomass changes are handled within PnET functions. This is a spoof.
         /// </summary>
-        public double ComputeChange(Library.UniversalCohorts.ICohort cohort, ActiveSite site) //,
-                                    // out double ANPP, out ExpandoObject otherParams)
+        public double ComputeChange(Library.UniversalCohorts.ICohort cohort, ActiveSite site,
+                                    out double ANPP, out ExpandoObject otherParams)
         {
             dynamic tempObject = new ExpandoObject();
             otherParams = tempObject;
