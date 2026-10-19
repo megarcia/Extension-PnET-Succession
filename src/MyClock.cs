@@ -29,7 +29,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             get
             {
                 int length = update.Length;
-                update = "Progress = " + Progress() + "%   Elapsed time " + MsToSec((int)sw.ElapsedMilliseconds) + "s   EstimatedTotalTime " + EstimatedTotalTime +"s\n";
+                update = "Progress = " + Progress() + "%   Elapsed time " + MsToSec((int)sw.ElapsedMilliseconds) + "s   EstimatedTotalTime " + EstimatedTotalTime +"s";
                 return update.PadRight(length, ' ');
             }
         }

@@ -551,7 +551,6 @@ namespace Landis.Extension.Succession.BiomassPnET
                 m.Next();
                 m.WriteUpdate();
             }
-            ModelCore.UI.WriteLine("\n");
             uint key = 0;
             allKeys.TryGetValue(site, out key);
             ICommunity initialCommunity = null;
@@ -569,15 +568,11 @@ namespace Landis.Extension.Succession.BiomassPnET
         {
             ModelCore.UI.WriteLine(string.Format("   Loading initial communities from file {0} ...", initialCommunitiesText));
             DatasetParser parser = new DatasetParser(Timestep, modelCore.Species, additionalCohortParameters, initialCommunitiesText);
-
             IDataset communities = Landis.Data.Load<IDataset>(initialCommunitiesText, parser);
-
             List<ActiveSite> processFirst = new List<ActiveSite>();
             List<ActiveSite> processSecond = new List<ActiveSite>();
-
             ModelCore.UI.WriteLine(string.Format("   Reading initial communities map {0} ...", initialCommunitiesMap));
             ProcessInitialCommunitiesMap(initialCommunitiesMap, communities, ref processFirst, ref processSecond);
-
             if (this.ThreadCount != 1)
             {
                 // Handle creation of initial community sites first
