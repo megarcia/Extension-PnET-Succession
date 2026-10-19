@@ -1,12 +1,12 @@
 //  Authors:  Robert M. Scheller, James B. Domingo
 
-// using System;
+using System;
 using System.Dynamic;
 using Landis.Core;
 using Landis.Library.PnETCohorts;
 using Landis.Library.UniversalCohorts;
 using Landis.SpatialModeling;
-// using Landis.Utilities;
+using Landis.Utilities;
 
 namespace Landis.Extension.Succession.BiomassPnET
 {
@@ -116,9 +116,8 @@ namespace Landis.Extension.Succession.BiomassPnET
         /// We don't actually want this method to change anything via Universal Cohorts--
         /// all biomass changes are handled within PnET functions. This is a spoof.
         /// </summary>
-        public double ComputeChange(Library.PnETCohorts.Cohort cohort,
-                                    ActiveSite site,
-                                    out double ANPP, out ExpandoObject otherParams)
+        public void ComputeChange(Library.PnETCohorts.ICohort cohort, ActiveSite site,
+                                  out double ANPP, out ExpandoObject otherParams)
         {
             dynamic tempObject = new ExpandoObject();
             otherParams = tempObject;
@@ -309,8 +308,8 @@ namespace Landis.Extension.Succession.BiomassPnET
         }
         */
 
-        public Percentage ComputeNonWoodyPercentage(Library.PnETCohorts.Cohort cohort,
-                                                    ActiveSite site)
+        public void ComputeNonWoodyPercentage(Library.PnETCohorts.Cohort cohort,
+                                              ActiveSite site)
         {
             float nonWoodyFrac = cohort.Fol / cohort.Data.Biomass;
             return new Percentage(nonWoodyFrac);
