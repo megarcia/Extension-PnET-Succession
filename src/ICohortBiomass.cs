@@ -11,11 +11,11 @@ namespace Landis.Extension.Succession.BiomassPnET
         /// Computes the change in an individual cohort's biomass due to annual
         /// growth and mortality.
         /// </summary>
-        int ComputeChange(ICohort cohort, ActiveSite site);
+        int ComputeChange(Library.UniversalCohorts.ICohort cohort, ActiveSite site);
 
         /// <summary>
         /// Computes the non-woody percentage of a cohort's biomass.
         /// </summary>
-        Percentage ComputeNonWoodyPercentage(ICohort cohort, ActiveSite site);
+        Percentage ComputeNonWoodyPercentage(Library.UniversalCohorts.ICohort cohort, ActiveSite site);
     }
 }
