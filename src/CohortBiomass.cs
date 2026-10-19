@@ -13,7 +13,7 @@ namespace Landis.Extension.Succession.BiomassPnET
     /// <summary>
     /// Calculations for an individual cohort's biomass.
     /// </summary>
-    public class CohortBiomass : Library.UniversalCohorts.ICalculator
+    public class CohortBiomass : ICohortBiomass
     {
         //  Ecoregion where the cohort's site is located
         // private IEcoregion ecoregion;
@@ -116,13 +116,13 @@ namespace Landis.Extension.Succession.BiomassPnET
         /// We don't actually want this method to change anything via Universal Cohorts--
         /// all biomass changes are handled within PnET functions. This is a spoof.
         /// </summary>
-        public void ComputeChange(Library.PnETCohorts.ICohort cohort, ActiveSite site,
-                                  out double ANPP, out ExpandoObject otherParams)
+        public int ComputeChange(ICohort cohort, ActiveSite site,
+                                 out double ANPP, out ExpandoObject otherParams)
         {
             dynamic tempObject = new ExpandoObject();
             otherParams = tempObject;
             ANPP = 0.0;
-            double deltaBiomass = 0;
+            int deltaBiomass = 0;
             return deltaBiomass;
         }
 
@@ -308,8 +308,8 @@ namespace Landis.Extension.Succession.BiomassPnET
         }
         */
 
-        public void ComputeNonWoodyPercentage(Library.PnETCohorts.Cohort cohort,
-                                              ActiveSite site)
+        public Percentage ComputeNonWoodyPercentage(ICohort cohort,
+                                                    ActiveSite site)
         {
             float nonWoodyFrac = cohort.Fol / cohort.Data.Biomass;
             return new Percentage(nonWoodyFrac);
