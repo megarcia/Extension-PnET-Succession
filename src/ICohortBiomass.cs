@@ -1,10 +1,11 @@
 using Landis.Core;
+using Landis.Library.UniversalCohorts;
 using Landis.SpatialModeling;
 using Landis.Utilities;
 
 namespace Landis.Extension.Succession.BiomassPnET
 {
-    public interface ICohortBiomass : Library.UniversalCohorts.ICalculator
+    public interface ICohortBiomass : ICalculator
     {
         /// <summary>
         /// Computes the change in an individual cohort's biomass due to annual
