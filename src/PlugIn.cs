@@ -587,6 +587,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                 foreach (ActiveSite site in processSecond)
                     InitializeSite((ActiveSite)site);
             }
+            ModelCore.UI.WriteLine("");
         }
 
         protected override void AgeCohorts(ActiveSite site,
