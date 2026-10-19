@@ -551,15 +551,12 @@ namespace Landis.Extension.Succession.BiomassPnET
                 m.Next();
                 m.WriteUpdate();
             }
-
+            ModelCore.UI.WriteLine("\n");
             uint key = 0;
             allKeys.TryGetValue(site, out key);
-
             ICommunity initialCommunity = null;
-
             if (!sitesAndCommunities.TryGetValue(site, out initialCommunity))
                 throw new ApplicationException(string.Format("Unable to retrieve initialCommunity for site: {0}", site.Location.Row + "," + site.Location.Column));
-
             if (Library.PnETCohorts.SiteCohorts.InitialSitesContainsKey(key))
                 // Create new SiteCohorts using InitialCommunities data
                 SiteVars.SiteCohorts[site] = new Library.PnETCohorts.SiteCohorts(StartDate, site, initialCommunity, SiteOutputNames.ContainsKey(site) ? SiteOutputNames[site] : null);

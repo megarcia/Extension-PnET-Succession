@@ -10,7 +10,7 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         public int Progress()
         {
-            int Percentage =(int)Math.Round(100.0f * ((float)unitsCount / (float)SumUnits), 0);
+            int Percentage = (int)Math.Round(100.0f * ((float)unitsCount / (float)SumUnits), 0);
             return Percentage;
         }
 
@@ -54,7 +54,8 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         public void WriteUpdate()
         {
-            Console.Write("\r\t" + Update);
+            // Console.Write("\r\t" + Update);
+            Console.Write("\r\t  " + Update);
         }
 
         public void Next()
