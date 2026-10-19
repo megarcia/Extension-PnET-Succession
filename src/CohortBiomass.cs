@@ -11,7 +11,7 @@ namespace Landis.Extension.Succession.BiomassPnET
     /// <summary>
     /// Calculations for an individual cohort's biomass.
     /// </summary>
-    public class CohortBiomass : ICohortBiomass
+    public class CohortBiomass : Library.UniversalCohorts.ICalculator, ICohortBiomass
     {
         //  Ecoregion where the cohort's site is located
         // private IEcoregion ecoregion;

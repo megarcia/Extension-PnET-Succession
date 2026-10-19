@@ -5,7 +5,7 @@ using Landis.Utilities;
 
 namespace Landis.Extension.Succession.BiomassPnET
 {
-    public interface ICohortBiomass : ICalculator
+    public interface ICohortBiomass : Library.UniversalCohorts.ICalculator
     {
         /// <summary>
         /// Computes the change in an individual cohort's biomass due to annual
@@ -14,7 +14,7 @@ namespace Landis.Extension.Succession.BiomassPnET
         int ComputeChange(ICohort cohort, ActiveSite site);
 
         /// <summary>
-        /// Computes the percentage of a cohort's biomass that is non-woody.
+        /// Computes the non-woody percentage of a cohort's biomass.
         /// </summary>
         Percentage ComputeNonWoodyPercentage(ICohort cohort, ActiveSite site);
     }
