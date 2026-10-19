@@ -2,10 +2,10 @@
 
 // using System;
 using System.Dynamic;
-// using Landis.Core;
+using Landis.Core;
 using Landis.Library.PnETCohorts;
 using Landis.Library.UniversalCohorts;
-// using Landis.SpatialModeling;
+using Landis.SpatialModeling;
 // using Landis.Utilities;
 
 namespace Landis.Extension.Succession.BiomassPnET
