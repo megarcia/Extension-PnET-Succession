@@ -67,7 +67,7 @@ namespace Landis.Extension.Succession.BiomassPnET
 {
     public class PlugIn : Landis.Library.Succession.ExtensionBase 
     {
-        public static SpeciesPnET SpeciesPnET;
+        public static Library.PnETCohorts.SpeciesPnET SpeciesPnET;
         public static DateTime Date;
         public static ICore ModelCore;
         private static DateTime StartDate;
@@ -271,13 +271,14 @@ namespace Landis.Extension.Succession.BiomassPnET
             string PARunits = ((Parameter<string>)Names.GetParameter(Names.PARunits)).Value;
             if (PARunits != "umol" && PARunits != "W/m2")
                 throw new Exception("PARunits are not 'umol' or 'W/m2'.");
-            InitializeClimateLibrary(StartDate.Year); // John McNabb: initialize climate library after EcoregionPnET has been initialized
+            // John McNabb: initialize climate library after EcoregionPnET has been initialized
+            InitializeClimateLibrary(StartDate.Year); 
 
-            //MG20261014 The following line was not present in PnET-Succession
-            //           as it is in the other Succession Extension PlugIn.cs
-            //           files (Biomass, NECN, ForC). Could this be part of the 
-            //           problem in maintaining connections between PnETCohorts and 
-            //           UniversalCohorts? The call is to:
+            //MG20261014 The following line was not present in PnET-Succession as it
+            //           is in the other Succession Extension PlugIn.cs files (Biomass, 
+            //           NECN, ForC). Could this be part of the problem in maintaining
+            //           connections between PnETCohorts and UniversalCohorts? The call
+            //           is to:
             //               public static void Initialize(int successionTimeStep,
             //                                             ICalculator biomassCalculator)
             //           so the "Timestep" argument seems correct but CohortBiomass()
@@ -290,8 +291,8 @@ namespace Landis.Extension.Succession.BiomassPnET
             // Cohorts must be created before the base class is initialized
             // because the base class's reproduction module uses the core's
             // SuccessionCohorts property in its Initialization method.
-            Library.UniversalCohorts.Cohorts.Initialize(Timestep, new CohortBiomass());  // replace CohortBiomass() with ???
-            //MG20261012 end addition
+            Library.UniversalCohorts.Cohorts.Initialize(Timestep, new CohortBiomass());
+            //MG20261014 end addition
 
             // Initialize Reproduction routines:
             Reproduction.SufficientResources = SufficientResources;
@@ -513,7 +514,6 @@ namespace Landis.Extension.Succession.BiomassPnET
                 cohort.CanopyGrowingSpace = 1.0f;
                 cohort.CanopyLayerProp = 1.0f;
             }
-            
             addCohort = SiteVars.SiteCohorts[site].AddNewCohort(cohort);
             if (addCohort)
             {

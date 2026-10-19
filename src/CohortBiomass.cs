@@ -1,11 +1,12 @@
 //  Authors:  Robert M. Scheller, James B. Domingo
 
-using System;
+// using System;
 using System.Dynamic;
-using Landis.Core;
+// using Landis.Core;
+using Landis.Library.PnETCohorts;
 using Landis.Library.UniversalCohorts;
-using Landis.SpatialModeling;
-using Landis.Utilities;
+// using Landis.SpatialModeling;
+// using Landis.Utilities;
 
 namespace Landis.Extension.Succession.BiomassPnET
 {
@@ -15,22 +16,23 @@ namespace Landis.Extension.Succession.BiomassPnET
     public class CohortBiomass : Library.UniversalCohorts.ICalculator
     {
         //  Ecoregion where the cohort's site is located
-        private IEcoregion ecoregion;
+        // private IEcoregion ecoregion;
 
         //  Ratio of actual biomass to maximum biomass for the cohort.
-        private double B_AP;
+        // private double B_AP;
 
         //  Ratio of potential biomass to maximum biomass for the cohort.
-        private double B_PM;
+        // private double B_PM;
 
         //  Totaly mortality without annual leaf litter for the cohort
-        private int M_noLeafLitter;
+        // private int M_noLeafLitter;
 
-        public static int SubYear;
-        private double growthReduction;
-        private double defoliation;
-        public static double SpinupMortalityFraction;
+        // public static int SubYear;
+        // private double growthReduction;
+        // private double defoliation;
+        // public static double SpinupMortalityFraction;
 
+        /*
         public int MortalityWithoutLeafLitter
         {
             get
@@ -38,11 +40,15 @@ namespace Landis.Extension.Succession.BiomassPnET
                 return M_noLeafLitter;
             }
         }
+        */
 
         public CohortBiomass()
         {
         }
 
+        //MG20261014 Verified the ComputeChange method is used in
+        //           Library.UniversalCohorts.SpeciesCohorts.cs, line 323
+        /*
         /// <summary>
         /// Computes the change in a cohort's biomass due to Annual Net Primary
         /// Productivity (ANPP), age-related mortality (M_AGE), and development-
@@ -104,7 +110,25 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
             return deltaBiomass;
         }
+        */
 
+        /// <summary>
+        /// We don't actually want this method to change anything via Universal Cohorts--
+        /// all biomass changes are handled within PnET functions. This is a spoof.
+        /// </summary>
+        public double ComputeChange(Library.PnETCohorts.Cohort cohort,
+                                    ActiveSite site,
+                                    out double ANPP, out ExpandoObject otherParams)
+        {
+            dynamic tempObject = new ExpandoObject();
+            otherParams = tempObject;
+            ANPP = 0.0;
+            double deltaBiomass = 0;
+            return deltaBiomass;
+        }
+
+        /*
+        // Called from ComputeChange above
         /// <summary>
         /// Computes M_AGE_ij: the mortality caused by the aging of the cohort.
         /// See equation 6 in Scheller and Mladenoff, 2004.
@@ -119,7 +143,10 @@ namespace Landis.Extension.Succession.BiomassPnET
                 M_AGE += cohort.Data.Biomass * SpinupMortalityFraction;
             return Math.Min(M_AGE, cohort.Data.Biomass);
         }
+        */
 
+        /*
+        // Called from ComputeChange above
         private double ComputeActualANPP(ICohort cohort, ActiveSite site)
         {
             int siteBiomass = SiteVars.TotalBiomass[site];
@@ -172,7 +199,35 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
             return actualANPP;
         }
+        */
 
+        /*
+        // Called from ComputeActualANPP above
+        // New method for calculating competition limits.
+        // Iterates through cohorts, assigning each a competitive efficiency
+        // The SiteVars.Cohorts here already reflects growth of some cohorts
+        // within the timestep.  Ideally that would not be the case, at least 
+        // for cohorts of the same age.  Otherwise, the order they are listed 
+        // influences their competion.
+        private static double CalculateCompetition(ActiveSite site, ICohort cohort)
+        {
+            double competitionPower = 0.95;
+            double CMultiplier = Math.Max(Math.Pow(cohort.Data.Biomass, competitionPower), 1.0);
+            double CMultTotal = CMultiplier;
+            foreach (ISpeciesCohorts speciesCohorts in SiteVars.Cohorts[site])
+                foreach (ICohort xcohort in speciesCohorts)
+                    if ((xcohort.Data.Age + 1 != cohort.Data.Age) || (xcohort.Species.Index != cohort.Species.Index))
+                    {
+                        double tempMultiplier = Math.Max(Math.Pow(xcohort.Data.Biomass, competitionPower), 1.0);
+                        CMultTotal += tempMultiplier;
+                    }
+            double Cfraction = CMultiplier / CMultTotal;
+            return Cfraction;
+        }
+        */
+
+        /*
+        // Called from ComputeChange above
         /// <summary>
         /// The mortality caused by development processes,
         /// including self-thinning and loss of branches, twigs, etc.
@@ -197,7 +252,10 @@ namespace Landis.Extension.Succession.BiomassPnET
                 M_BIO *= 1.0 - growthReduction;
             return M_BIO;
         }
+        */
 
+        /*
+        // Called from ComputeChange above
         private double UpdateDeadBiomass(ICohort cohort, double actualANPP, double totalMortality, ActiveSite site, double newBiomass)
         {
             ISpecies species = cohort.Species;
@@ -234,7 +292,32 @@ namespace Landis.Extension.Succession.BiomassPnET
             M_noLeafLitter = (int)mortality_wood;
             return annualLeafANPP + mortality_nonwood + mortality_wood;
         }
+        */
 
+        //MG20261014 Verified the ComputeNonWoodyPercentage method is used in
+        //           Library.UniversalCohorts.Cohort.cs, line 204
+        /// <summary>
+        /// Computes the percentage of a cohort's standing biomass that is non-woody.
+        /// This method is designed for external calls that need to estimate the amount
+        /// of non-wood biomass.
+        /// </summary>
+        /*
+        public Percentage ComputeNonWoodyPercentage(ICohort cohort,
+                                                    ActiveSite site)
+        {
+            return new Percentage(ComputeStandingLeafBiomass(cohort.Data.ANPP, cohort) / cohort.Data.Biomass);
+        }
+        */
+
+        public Percentage ComputeNonWoodyPercentage(Library.PnETCohorts.Cohort cohort,
+                                                    ActiveSite site)
+        {
+            float nonWoodyFrac = cohort.Fol / cohort.Data.Biomass;
+            return new Percentage(nonWoodyFrac);
+        }
+
+        /*
+        // Called from ComputeNonWoodyPercentage above
         /// <summary>
         /// Computes the cohort's biomass that is leaf litter
         /// or other non-woody components.  Assumption is that remainder is woody.
@@ -250,7 +333,12 @@ namespace Landis.Extension.Succession.BiomassPnET
             B_nonwoody = Math.Min(B_nonwoody, cohort.Data.Biomass * annualLeafFraction);
             return B_nonwoody;
         }
+        */
 
+        /*
+        // Called from ComputeChange above
+        // Called from UpdateDeadBiomass above, which is called from ComputeChange above
+        // Called from ComputeStandingLeafBiomass above
         public static double ComputeFractionANPPleaf(ISpecies species)
         {
             //  A portion of growth goes to creating leaves (Niklas and Enquist 2002).
@@ -259,18 +347,11 @@ namespace Landis.Extension.Succession.BiomassPnET
             double leafFraction = 0.35;
             return leafFraction;
         }
+        */
 
-        /// <summary>
-        /// Computes the percentage of a cohort's standing biomass that is non-woody.
-        /// This method is designed for external calls that need to
-        /// estimate the amount of non-wood biomass.
-        /// </summary>
-        public Percentage ComputeNonWoodyPercentage(ICohort cohort,
-                                                    ActiveSite site)
-        {
-            return new Percentage(ComputeStandingLeafBiomass(cohort.Data.ANPP, cohort) / cohort.Data.Biomass);
-        }
-
+        // Apparently not called from anywhere in Library.UniversalCohorts
+        // or here in PlugIn.cs or Library.PnETCohorts
+        /*
         /// <summary>
         /// Computes the initial biomass for a cohort at a site.
         /// </summary>
@@ -295,27 +376,6 @@ namespace Landis.Extension.Succession.BiomassPnET
             initialBiomass = Math.Max(2.0, initialBiomass);
             return (int)initialBiomass;
         }
-
-        // New method for calculating competition limits.
-        // Iterates through cohorts, assigning each a competitive efficiency
-        // The SiteVars.Cohorts here already reflects growth of some cohorts
-        // within the timestep.  Ideally that would not be the case, at least 
-        // for cohorts of the same age.  Otherwise, the order they are listed 
-        // influences their competion.
-        private static double CalculateCompetition(ActiveSite site, ICohort cohort)
-        {
-            double competitionPower = 0.95;
-            double CMultiplier = Math.Max(Math.Pow(cohort.Data.Biomass, competitionPower), 1.0);
-            double CMultTotal = CMultiplier;
-            foreach (ISpeciesCohorts speciesCohorts in SiteVars.Cohorts[site])
-                foreach (ICohort xcohort in speciesCohorts)
-                    if ((xcohort.Data.Age + 1 != cohort.Data.Age) || (xcohort.Species.Index != cohort.Species.Index))
-                    {
-                        double tempMultiplier = Math.Max(Math.Pow(xcohort.Data.Biomass, competitionPower), 1.0);
-                        CMultTotal += tempMultiplier;
-                    }
-            double Cfraction = CMultiplier / CMultTotal;
-            return Cfraction;
-        }
+        */
     }
 }
