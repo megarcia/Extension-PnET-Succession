@@ -1,3 +1,4 @@
+using System.Dynamic;
 using Landis.Core;
 using Landis.Library.UniversalCohorts;
 using Landis.SpatialModeling;
