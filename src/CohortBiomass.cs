@@ -306,7 +306,7 @@ namespace Landis.Extension.Succession.BiomassPnET
         }
         */
 
-        public Percentage ComputeNonWoodyPercentage(Library.UniversalCohorts.ICohort cohort,
+        public Percentage ComputeNonWoodyPercentage(Library.PnETCohorts.ICohort cohort,
                                                     ActiveSite site)
         {
             float nonWoodyFrac = cohort.Fol / cohort.Data.Biomass;
