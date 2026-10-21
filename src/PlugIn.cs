@@ -295,13 +295,13 @@ namespace Landis.Extension.Succession.BiomassPnET
             // Library.UniversalCohorts.Cohorts.Initialize(Timestep, new CohortBiomass());
             //
             //MG20261014 end addition
-            Library.PnETCohorts.Cohorts.Initialize(Timestep);
+            Library.PnETCohorts.Cohorts.Initialize(Timestep);  //MG20261020 I'm not sure this will do it...
             //MG20261019 end addition
 
             // Initialize Reproduction routines:
             Reproduction.SufficientResources = SufficientResources;
             Reproduction.Establish = Establish;
-            Reproduction.AddNewCohort = AddNewCohort;
+            Reproduction.AddNewCohort = AddNewCohort;  //MG20261020 refers to local AddNewCohort method below
             Reproduction.MaturePresent = MaturePresent;
             Reproduction.PlantingEstablish = PlantingEstablish;
             SeedingAlgorithms SeedAlgorithm = (SeedingAlgorithms)Enum.Parse(typeof(SeedingAlgorithms), Names.parameters["SeedingAlgorithm"].Value);
@@ -512,13 +512,13 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
             bool addSiteOutput = false;
             addSiteOutput = SiteOutputNames.ContainsKey(site) && addCohort;
-            Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, propBiomass, false);
+            Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, propBiomass, false);  //MG20261020 creates a new PnET Cohort, but not a new UCL Cohort
             if (((Parameter<bool>)Names.GetParameter(Names.CohortStacking)).Value)
             {
                 cohort.CanopyGrowingSpace = 1.0f;
                 cohort.CanopyLayerProp = 1.0f;
             }
-            addCohort = SiteVars.SiteCohorts[site].AddNewCohort(cohort);
+            addCohort = SiteVars.SiteCohorts[site].AddNewCohort(cohort);  //MG20261020 normally this would point at UniversalCohorts.AddNewCohort method, but here it goes to PnETCohorts.SiteCohorts.AddNewCohort with bool return value
             if (addCohort)
             {
                 if (reproductionType == "plant")

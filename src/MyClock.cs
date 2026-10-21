@@ -43,8 +43,8 @@ namespace Landis.Extension.Succession.BiomassPnET
         {
             get
             {
-                // MG20260827 -- avoid divide-by-zero causing potential overflow error 
                 int progress = Progress();
+                //MG20260827 avoid divide-by-zero causing potential overflow error 
                 int EstimatedTotalTime = 0;
                 if (progress > 0)
                     EstimatedTotalTime = (int)Math.Round(100.0 / progress * MsToSec((int)sw.ElapsedMilliseconds), 0);
@@ -54,7 +54,6 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         public void WriteUpdate()
         {
-            // Console.Write("\r\t" + Update);
             Console.Write("\r\t  " + Update);
         }
 
