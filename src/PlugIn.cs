@@ -73,7 +73,6 @@ namespace Landis.Extension.Succession.BiomassPnET
         private static DateTime StartDate;
         private static Dictionary<ActiveSite, string> SiteOutputNames;
         public static float FTimeStep;
-        public static bool UsingClimateLibrary;
         private Dictionary<ActiveSite, ICommunity> sitesAndCommunities;
         public static string InitialCommunitiesSpinup;
         public static int CohortBinSize;
@@ -81,6 +80,9 @@ namespace Landis.Extension.Succession.BiomassPnET
         private static readonly object threadLock = new object();
         private Dictionary<ActiveSite, uint> allKeys;
         public static float MinFolRatioFactor;
+
+        //MG20261021 TODO the LANDIS Climate Library will soon be the default operation
+        public static bool UsingClimateLibrary;
 
         MyClock m = null;
 
@@ -336,8 +338,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                 SiteVars.PressureHead[site] = currentPressureHead;
                 SiteVars.FieldCapacity[site] = ecoregion.FieldCap / 10.0f; // cm volume (accounts for rooting depth)
 
-                //MG20260911 this will soon be the default operation, so "if () {}" will
-                //           be removed and internal block indentation will be promoted 
+                //MG20261021 TODO the LANDIS Climate Library will soon be the default operation
                 if (UsingClimateLibrary)
                 {
                     SiteVars.ExtremeMinTemp[site] = (float)Climate.FutureEcoregionYearClimate[ecoregion.Index][1].MonthlyTemp.Min()
@@ -482,6 +483,7 @@ namespace Landis.Extension.Succession.BiomassPnET
         private void InitializeClimateLibrary(int startYear=0)
         {
             Parameter<string> climateLibraryFileName;
+            //MG20261021 TODO the LANDIS Climate Library will soon be the default operation
             UsingClimateLibrary = Names.TryGetParameter(Names.ClimateConfigFile, out climateLibraryFileName);
             if (UsingClimateLibrary)
             {
@@ -512,13 +514,19 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
             bool addSiteOutput = false;
             addSiteOutput = SiteOutputNames.ContainsKey(site) && addCohort;
-            Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, propBiomass, false);  //MG20261020 creates a new PnET Cohort, but not a new UCL Cohort
+            //MG20261020 creates a new PnET Cohort, but not a new UCL Cohort
+            //MG20261021 added site variable, now spawns new Universal Cohort
+            Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(site, species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, propBiomass, false);  
             if (((Parameter<bool>)Names.GetParameter(Names.CohortStacking)).Value)
             {
                 cohort.CanopyGrowingSpace = 1.0f;
                 cohort.CanopyLayerProp = 1.0f;
             }
-            addCohort = SiteVars.SiteCohorts[site].AddNewCohort(cohort);  //MG20261020 normally this would point at UniversalCohorts.AddNewCohort method, but here it goes to PnETCohorts.SiteCohorts.AddNewCohort with bool return value
+            //MG20261020 in other Succession Extensions, this line would point at the
+            //           UniversalCohorts.AddNewCohort method with no return value;
+            //           here, it goes to PnETCohorts.SiteCohorts.AddNewCohort with 
+            //           bool return value for confirmation
+            addCohort = SiteVars.SiteCohorts[site].AddNewCohort(cohort);  
             if (addCohort)
             {
                 if (reproductionType == "plant")
@@ -561,6 +569,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                 SiteVars.SiteCohorts[site] = new Library.PnETCohorts.SiteCohorts(StartDate, site, initialCommunity, SiteOutputNames.ContainsKey(site) ? SiteOutputNames[site] : null);
             else
                 // Create new SiteCohorts from scratch
+                //MG20261021 TODO the LANDIS Climate Library will soon be the default operation
                 SiteVars.SiteCohorts[site] = new Library.PnETCohorts.SiteCohorts(StartDate, site, initialCommunity, UsingClimateLibrary, InitialCommunitiesSpinup, MinFolRatioFactor, SiteOutputNames.ContainsKey(site) ? SiteOutputNames[site] : null);
         }
 
@@ -598,6 +607,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             DateTime date = new DateTime(StartDate.Year + ModelCore.CurrentTime - Timestep, 1, 15);
             DateTime EndDate = date.AddYears(years);
             IEcoregionPnET ecoregion_pnet = EcoregionData.GetPnETEcoregion(ModelCore.Ecoregion[site]);
+            //MG20261021 TODO resolve climate input path to use LANDIS Climate Library only
             List<IEcoregionPnETVariables> climate_vars = UsingClimateLibrary ? EcoregionData.GetClimateRegionData(ecoregion_pnet, date, EndDate) : EcoregionData.GetData(ecoregion_pnet, date, EndDate);
             SiteVars.SiteCohorts[site].Grow(climate_vars);
             SiteVars.SiteCohorts[site].DisturbanceTypesReduced.Clear();
