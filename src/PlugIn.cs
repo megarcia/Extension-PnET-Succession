@@ -297,7 +297,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             // Library.UniversalCohorts.Cohorts.Initialize(Timestep, new CohortBiomass());
             //
             //MG20261014 end addition
-            Library.PnETCohorts.Cohorts.Initialize(Timestep);  //MG20261020 I'm not sure this will do it...
+            // Library.PnETCohorts.Cohorts.Initialize(Timestep);  //MG20261022 not working like I expected
             //MG20261019 end addition
 
             // Initialize Reproduction routines:
@@ -514,18 +514,12 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
             bool addSiteOutput = false;
             addSiteOutput = SiteOutputNames.ContainsKey(site) && addCohort;
-            //MG20261020 creates a new PnET Cohort, but not a new UCL Cohort
-            //MG20261021 added site variable, now spawns new Universal Cohort
-            Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(site, species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, propBiomass, false);  
+            Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, propBiomass, false);  
             if (((Parameter<bool>)Names.GetParameter(Names.CohortStacking)).Value)
             {
                 cohort.CanopyGrowingSpace = 1.0f;
                 cohort.CanopyLayerProp = 1.0f;
             }
-            //MG20261020 in other Succession Extensions, this line would point at the
-            //           UniversalCohorts.AddNewCohort method with no return value;
-            //           here, it goes to PnETCohorts.SiteCohorts.AddNewCohort with 
-            //           bool return value for confirmation
             addCohort = SiteVars.SiteCohorts[site].AddNewCohort(cohort);  
             if (addCohort)
             {
