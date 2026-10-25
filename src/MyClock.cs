@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Landis.Extension.Succession.BiomassPnET
 {
     public class MyClock
     {
-        System.Diagnostics.Stopwatch sw = null;
+        Stopwatch sw = null;
         public int SumUnits { get; private set; }
         int unitsCount = 0;
+        string update = "";
 
         public int Progress()
         {
@@ -22,8 +24,6 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
         }
 
-        string update = "";
-
         string Update
         {
             get
@@ -34,7 +34,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
         }
 
-        int MsToSec(int ProgressinMs)
+        int MsToSec(long ProgressinMs)
         {
             return (int)(ProgressinMs / 1000.0);
         }
@@ -47,7 +47,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                 //MG20260827 avoid divide-by-zero causing potential overflow error 
                 int EstimatedTotalTime = 0;
                 if (progress > 0)
-                    EstimatedTotalTime = (int)Math.Round(100.0 / progress * MsToSec((int)sw.ElapsedMilliseconds), 0);
+                    EstimatedTotalTime = (int)Math.Round(100.0f / progress * MsToSec(ElapsedTime), 0);
                 return EstimatedTotalTime;
             }
         }
@@ -67,7 +67,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             this.SumUnits = SumUnits;
             if (sw == null)
             {
-                sw = new System.Diagnostics.Stopwatch();
+                sw = new Stopwatch();
                 sw.Start();
             }
         }

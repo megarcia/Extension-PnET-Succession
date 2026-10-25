@@ -53,6 +53,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Threading.Tasks;
 using Landis.Core;
 using Landis.Library.Climate;
@@ -65,7 +66,7 @@ using Landis.SpatialModeling;
 
 namespace Landis.Extension.Succession.BiomassPnET
 {
-    public class PlugIn : Landis.Library.Succession.ExtensionBase 
+    public class PlugIn : Library.Succession.ExtensionBase 
     {
         public static Library.PnETCohorts.SpeciesPnET SpeciesPnET;
         public static DateTime Date;
@@ -208,8 +209,13 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         public override void Initialize()
         {
+<<<<<<< HEAD
             ModelCore.UI.WriteLine("Initializing " + Names.ExtensionName + " version " + typeof(PlugIn).Assembly.GetName().Version);
             Library.PnETCohorts.Cohort.DeathEvent += DeathEvent;
+=======
+            PlugIn.ModelCore.UI.WriteLine("Initializing " + Names.ExtensionName + " version " + typeof(PlugIn).Assembly.GetName().Version);
+            Cohort.DeathEvent += DeathEvent;
+>>>>>>> dev
             StartDate = new DateTime(((Parameter<int>)Names.GetParameter(Names.StartYear)).Value, 1, 15);
             Globals.InitializeCore(ModelCore, ((Parameter<ushort>)Names.GetParameter(Names.IMAX)).Value, StartDate);
             EcoregionData.Initialize();
@@ -273,6 +279,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             string PARunits = ((Parameter<string>)Names.GetParameter(Names.PARunits)).Value;
             if (PARunits != "umol" && PARunits != "W/m2")
                 throw new Exception("PARunits are not 'umol' or 'W/m2'.");
+<<<<<<< HEAD
             // John McNabb: initialize climate library after EcoregionPnET has been initialized
             InitializeClimateLibrary(StartDate.Year); 
 
@@ -299,6 +306,9 @@ namespace Landis.Extension.Succession.BiomassPnET
             //MG20261014 end addition
             // Library.PnETCohorts.Cohorts.Initialize(Timestep);  //MG20261022 not working like I expected
             //MG20261019 end addition
+=======
+            InitializeClimateLibrary(StartDate.Year); // John McNabb: initialize climate library after EcoregionPnET has been initialized
+>>>>>>> dev
 
             // Initialize Reproduction routines:
             Reproduction.SufficientResources = SufficientResources;
@@ -310,7 +320,11 @@ namespace Landis.Extension.Succession.BiomassPnET
             base.Initialize(ModelCore, SeedAlgorithm);
     
             ModelCore.UI.WriteLine("Spinning up biomass or reading from maps...");
+<<<<<<< HEAD
             string InitialCommunitiesTxtFile = Names.GetParameter(Names.InitialCommunities).Value;
+=======
+            string InitialCommunitiesTXTFile = Names.GetParameter(Names.InitialCommunities).Value;
+>>>>>>> dev
             string InitialCommunitiesMapFile = Names.GetParameter(Names.InitialCommunitiesMap).Value;
             InitialCommunitiesSpinup = Names.GetParameter(Names.InitialCommunitiesSpinup).Value;
             MinFolRatioFactor = ((Parameter<float>)Names.GetParameter(Names.MinFolRatioFactor,0,float.MaxValue)).Value;
@@ -324,8 +338,12 @@ namespace Landis.Extension.Succession.BiomassPnET
             if (woodyDebrisMapFile)
                 MapReader.ReadWoodyDebrisFromMap(WoodyDebrisMapFile.Value);
 
+<<<<<<< HEAD
             //MG20261012 renamed variable PnETCohorts to PnETSiteCohorts to avoid confusion with library name
             ISiteVar<Library.PnETCohorts.SiteCohorts> PnETSiteCohorts = ModelCore.Landscape.NewSiteVar<Library.PnETCohorts.SiteCohorts>();
+=======
+            ISiteVar<SiteCohorts> PnETCohorts = ModelCore.Landscape.NewSiteVar<SiteCohorts>();
+>>>>>>> dev
 
             foreach (ActiveSite site in ModelCore.Landscape)
             {
@@ -341,27 +359,46 @@ namespace Landis.Extension.Succession.BiomassPnET
                 //MG20261021 TODO the LANDIS Climate Library will soon be the default operation
                 if (UsingClimateLibrary)
                 {
+<<<<<<< HEAD
                     SiteVars.ExtremeMinTemp[site] = (float)Climate.FutureEcoregionYearClimate[ecoregion.Index][1].MonthlyTemp.Min()
                                                     - (3.0f * ecoregion.WinterSTD);
+=======
+                    SiteVars.ExtremeMinTemp[site] = (float)Climate.FutureEcoregionYearClimate[ecoregion.Index][1].MonthlyTemp.Min() - (float)(3.0 * ecoregion.WinterSTD);
+>>>>>>> dev
 
                     if (((Parameter<bool>)Names.GetParameter(Names.SoilIceDepth)).Value)
                     { 
                         if(SiteVars.MonthlySoilTemp[site].Count() == 0)
                         { 
+<<<<<<< HEAD
                             //MG20260911 all of these calculations and assignments will
                             //           soon be moved to a new Soil Class in the PnET
                             //           Cohort Library
+=======
+                            //MG20260911 All of these calculations and assignments will soon be moved 
+                            //           to a new Soils Class in the PnET Cohort Library.
+                            //MG20260914 This code is almost entirely redundant with the Permafrost
+                            //           class both here and in PnETCohorts, except for one little
+                            //           return variable that is more up-to-date in PnETCohorts. The
+                            //           (local) Permafrost class is called in only one place here.
+                            //           All of this code in PlugIn.cs will be moved into PnETCohorts
+                            //           and the Initialization calculations needed here will be obtained
+                            //           from there. The local (Extension-level) Permafrost class will 
+                            //           be deprecated and removed.
+                            //MG20260922 Call to Permafrost class redirected to PnETCohorts.Soils class.
+                            //           Permafrost.cs is now redundant, deprecated, and removed.
+>>>>>>> dev
 
                             // Soil calcs for soil temp
                             float waterContent = hydrology.Water;// volumetric m/m
                             float porosity = ecoregion.Porosity;  // volumetric m/m 
                             float ga = 0.035F + 0.298F * (waterContent / porosity);
-                            float Fa = ((2.0F / 3.0F) / (1.0F + ga * ((Constants.lambda_a / Constants.lambda_w) - 1.0F))) + ((1.0F / 3.0F) / (1.0F + (1.0F - 2.0F * ga) * ((Constants.lambda_a / Constants.lambda_w) - 1.0F))); // ratio of air temp gradient
+                            float Fa = ((2.0F / 3.0F) / (1.0F + ga * ((Constants.ThermalConductivityAir_Watts / Constants.ThermalConductivityWater_Watts) - 1.0F))) + ((1.0F / 3.0F) / (1.0F + (1.0F - 2.0F * ga) * ((Constants.ThermalConductivityAir_Watts / Constants.ThermalConductivityWater_Watts) - 1.0F))); // ratio of air temp gradient
                             float Fs = PressureHeadSaxton_Rawls.GetFs(ecoregion.SoilType);
                             float lambda_s = PressureHeadSaxton_Rawls.GetLambda_s(ecoregion.SoilType);
-                            float lambda_theta = (Fs * (1.0F - porosity) * lambda_s + Fa * (porosity - waterContent) * Constants.lambda_a + waterContent * Constants.lambda_w) / (Fs * (1.0F - porosity) + Fa * (porosity - waterContent) + waterContent); //soil thermal conductivity (kJ/m/d/K)
+                            float lambda_theta = (Fs * (1.0F - porosity) * lambda_s + Fa * (porosity - waterContent) * Constants.ThermalConductivityAir_Watts + waterContent * Constants.ThermalConductivityWater_Watts) / (Fs * (1.0F - porosity) + Fa * (porosity - waterContent) + waterContent); //soil thermal conductivity (kJ/m/d/K)
                             float D = lambda_theta / PressureHeadSaxton_Rawls.GetCTheta(ecoregion.SoilType);  //m2/day
-                            float Dmms = D * 1000000 / 86400; //mm2/s
+                            float Dmms = D * Constants.Million / Constants.SecondsPerDay; //mm2/s
                             float d = (float)Math.Sqrt(2 * Dmms / Constants.omega);
                             float maxDepth = ecoregion.RootingDepth + ecoregion.LeakageFrostDepth;
                             float bottomFreezeDepth = maxDepth / 1000;
@@ -382,10 +419,8 @@ namespace Landis.Extension.Succession.BiomassPnET
                                     float DRz_snow = 1F; // Assume no snow in initialization
 
                                     float mossDepth = ecoregion.MossDepth;
-                                    float cv = 2500; // heat capacity moss - kJ/m3/K (Sazonova and Romanovsky 2003)
-                                    float lambda_moss = 432; // kJ/m/d/K - converted from 0.2 W/mK (Sazonova and Romanovsky 2003)
-                                    float moss_diffusivity = lambda_moss / cv;
-                                    float damping_moss = (float)Math.Sqrt((2.0F * moss_diffusivity) / Constants.omega);
+                                    float moss_diffusivity = Constants.ThermalConductivityMoss / Constants.HeatCapacityMoss;
+                                    float damping_moss = (float)Math.Sqrt(2.0F * moss_diffusivity / Constants.omega);
                                     float DRz_moss = (float)Math.Exp(-1.0F * mossDepth * damping_moss); // Damping ratio for moss - adapted from Kang et al. (2000) and Liang et al. (2014)
 
 
@@ -465,7 +500,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                                         else
                                             testDepth += 0.25F;
                                     }
-                                    SiteVars.MonthlySoilTemp[site][m] = Permafrost.CalculateMonthlySoilTemps(depthTempDict, ecoregion, 0, 0, hydrology, (float)monthlyAirT[m]);
+                                    SiteVars.MonthlySoilTemp[site][m] = Library.PnETCohorts.Soils.CalculateMonthlySoilTemps(depthTempDict, ecoregion, 0, 0, hydrology, (float)monthlyAirT[m]);
                                 }
                             }
                         }
@@ -514,7 +549,11 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
             bool addSiteOutput = false;
             addSiteOutput = SiteOutputNames.ContainsKey(site) && addCohort;
+<<<<<<< HEAD
             Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, propBiomass, false);  
+=======
+            Cohort cohort = new Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, propBiomass, false);
+>>>>>>> dev
             if (((Parameter<bool>)Names.GetParameter(Names.CohortStacking)).Value)
             {
                 cohort.CanopyGrowingSpace = 1.0f;
@@ -599,9 +638,17 @@ namespace Landis.Extension.Succession.BiomassPnET
         {
             // Date starts at 1/15/Year
             DateTime date = new DateTime(StartDate.Year + ModelCore.CurrentTime - Timestep, 1, 15);
+<<<<<<< HEAD
             DateTime EndDate = date.AddYears(years);
             IEcoregionPnET ecoregion_pnet = EcoregionData.GetPnETEcoregion(ModelCore.Ecoregion[site]);
             //MG20261021 TODO resolve climate input path to use LANDIS Climate Library only
+=======
+
+            DateTime EndDate = date.AddYears(years);
+
+            IEcoregionPnET ecoregion_pnet = EcoregionData.GetPnETEcoregion(ModelCore.Ecoregion[site]);
+
+>>>>>>> dev
             List<IEcoregionPnETVariables> climate_vars = UsingClimateLibrary ? EcoregionData.GetClimateRegionData(ecoregion_pnet, date, EndDate) : EcoregionData.GetData(ecoregion_pnet, date, EndDate);
             SiteVars.SiteCohorts[site].Grow(climate_vars);
             SiteVars.SiteCohorts[site].DisturbanceTypesReduced.Clear();
