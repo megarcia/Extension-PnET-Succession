@@ -265,7 +265,8 @@ namespace Landis.Extension.Succession.BiomassPnET
             string PARunits = ((Parameter<string>)Names.GetParameter(Names.PARunits)).Value;
             if (PARunits != "umol" && PARunits != "W/m2")
                 throw new Exception("PARunits are not 'umol' or 'W/m2'.");
-            InitializeClimateLibrary(StartDate.Year); // John McNabb: initialize climate library after EcoregionPnET has been initialized
+            // John McNabb: initialize climate library after EcoregionPnET has been initialized
+            InitializeClimateLibrary(StartDate.Year); 
             // Initialize Reproduction routines:
             Reproduction.SufficientResources = SufficientResources;
             Reproduction.Establish = Establish;
@@ -567,8 +568,10 @@ namespace Landis.Extension.Succession.BiomassPnET
             DateTime date = new DateTime(StartDate.Year + ModelCore.CurrentTime - Timestep, 1, 15);
             DateTime EndDate = date.AddYears(years);
             IEcoregionPnET ecoregion_pnet = EcoregionData.GetPnETEcoregion(ModelCore.Ecoregion[site]);
+            
             //MG20261026 using the Climate Library will soon be the default operation
             List<IEcoregionPnETVariables> climate_vars = UsingClimateLibrary ? EcoregionData.GetClimateRegionData(ecoregion_pnet, date, EndDate) : EcoregionData.GetData(ecoregion_pnet, date, EndDate);
+            
             SiteVars.SiteCohorts[site].Grow(climate_vars);
             SiteVars.SiteCohorts[site].DisturbanceTypesReduced.Clear();
             Date = EndDate;
@@ -585,8 +588,6 @@ namespace Landis.Extension.Succession.BiomassPnET
             if (Timestep > 0)
                 ClimateRegionData.SetAllEcoregionsFutureAnnualClimate(ModelCore.CurrentTime);
             base.Run();
-            //MG20260911 end of PnET operations step, time to update Universal Cohorts
-            // SiteVars.UpdateUniversalCohorts();
         }
 
         // Required delegate method to base succession - not used within PnET-Succession

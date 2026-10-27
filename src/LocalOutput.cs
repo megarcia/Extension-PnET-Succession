@@ -18,7 +18,7 @@ namespace Landis.Extension.Succession.BiomassPnET
             this.FileName = FileName;
             if (File.Exists(OutputPath + FileName))
                 File.Delete(OutputPath + FileName);
-            if (Directory.Exists(OutputPath) == false)
+            if (!Directory.Exists(OutputPath))
                 Directory.CreateDirectory(OutputPath);
             FileContent = new List<string>(new string[] { Header });
             Write();
