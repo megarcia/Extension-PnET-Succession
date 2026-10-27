@@ -115,12 +115,10 @@ namespace Landis.Extension.Succession.BiomassPnET
         public PlugIn() : base(Names.ExtensionName)
         {
             LocalOutput.PNEToutputsites = Names.PNEToutputsites;
-
             // The number of thread workers to use in succession routines that have been optimized. Should
             // more or less match the number of cores in the computer thats running LANDIS-II's processor
-            //this.ThreadCount = 3;
-            //this.ThreadCount = 1;
-
+            // this.ThreadCount = 3;
+            // this.ThreadCount = 1;
             allKeys = new Dictionary<ActiveSite, uint>();
             sitesAndCommunities = new Dictionary<ActiveSite, ICommunity>();
         }
@@ -193,11 +191,9 @@ namespace Landis.Extension.Succession.BiomassPnET
             Parameter<string> PnETGenericDefaultParameterFile = new Parameter<string>(Names.PnETGenericDefaultParameters, PnETDefaultsFolder + Path.DirectorySeparatorChar + "PnETGenericDefaultParameters.txt");
             Names.parameters.Add(Names.PnETGenericDefaultParameters, PnETGenericDefaultParameterFile);
             Dictionary<string, Parameter<string>> genericdefaultparameters = Names.LoadTable(Names.PnETGenericDefaultParameters, RowLabels, null, true);
-
             foreach (KeyValuePair<string, Parameter<string>> par in genericdefaultparameters)
                 if (!Names.parameters.ContainsKey(par.Key))
                     Names.parameters.Add(par.Key, par.Value);
-
             SiteOutputNames = new Dictionary<ActiveSite, string>();
             Parameter<string> OutputSitesFile;
             if (Names.TryGetParameter(LocalOutput.PNEToutputsites, out OutputSitesFile))
@@ -209,20 +205,13 @@ namespace Landis.Extension.Succession.BiomassPnET
 
         public override void Initialize()
         {
-<<<<<<< HEAD
             ModelCore.UI.WriteLine("Initializing " + Names.ExtensionName + " version " + typeof(PlugIn).Assembly.GetName().Version);
             Library.PnETCohorts.Cohort.DeathEvent += DeathEvent;
-=======
-            PlugIn.ModelCore.UI.WriteLine("Initializing " + Names.ExtensionName + " version " + typeof(PlugIn).Assembly.GetName().Version);
-            Cohort.DeathEvent += DeathEvent;
->>>>>>> dev
             StartDate = new DateTime(((Parameter<int>)Names.GetParameter(Names.StartYear)).Value, 1, 15);
             Globals.InitializeCore(ModelCore, ((Parameter<ushort>)Names.GetParameter(Names.IMAX)).Value, StartDate);
             EcoregionData.Initialize();
             SiteVars.Initialize();
-
             Landis.Utilities.Directory.EnsureExists("output");
-
             Timestep = ((Parameter<int>)Names.GetParameter(Names.Timestep)).Value;
             Parameter<string> CohortBinSizeParm = null;
             if (Names.TryGetParameter(Names.CohortBinSize, out CohortBinSizeParm))
@@ -232,24 +221,23 @@ namespace Landis.Extension.Succession.BiomassPnET
                     if(CohortBinSize < Timestep)
                         throw new Exception("CohortBinSize cannot be smaller than Timestep.");
                     else
-                        ModelCore.UI.WriteLine("  Succession timestep = " + Timestep + "; CohortBinSize = " + CohortBinSize + ".");
+                        ModelCore.UI.WriteLine("   Succession timestep = " + Timestep + "; CohortBinSize = " + CohortBinSize + ".");
                 }
                 else
                     throw new Exception("CohortBinSize is not an integer value.");
             }
             else
                 CohortBinSize = Timestep;
-
             string Parallel = ((Parameter<string>)Names.GetParameter(Names.Parallel)).Value;
             if (Parallel == "false")
             {
                 ParallelThreads = 1;
-                ModelCore.UI.WriteLine("  MaxParallelThreads = " + ParallelThreads.ToString() + ".");
+                ModelCore.UI.WriteLine("   MaxParallelThreads = " + ParallelThreads.ToString() + ".");
             }
             else if (Parallel == "true")
             {
                 ParallelThreads = -1;
-                ModelCore.UI.WriteLine("  MaxParallelThreads determined by system.");
+                ModelCore.UI.WriteLine("   MaxParallelThreads determined by system.");
             }
             else
             {
@@ -258,57 +246,30 @@ namespace Landis.Extension.Succession.BiomassPnET
                     if (ParallelThreads < 1)
                         throw new Exception("Parallel cannot be < 1.");
                     else
-                        ModelCore.UI.WriteLine("  MaxParallelThreads = " + ParallelThreads.ToString() + ".");
+                        ModelCore.UI.WriteLine("   MaxParallelThreads = " + ParallelThreads.ToString() + ".");
                 }
                 else
                     throw new Exception("Parallel must be 'true', 'false' or an integer >= 1.");
             }
             this.ThreadCount = ParallelThreads;
-
             FTimeStep = 1.0f / Timestep;
             if(!Names.TryGetParameter(Names.ClimateConfigFile, out var climateLibraryFileName))
             {
+                //MG20261026 using the Climate Library will soon be the default operation
+                //           so this path for climate data input will soon be removed
                 ModelCore.UI.WriteLine($"  No ClimateConfigFile provided. Using climate files in ecoregion parameters: {Names.parameters["EcoregionParameters"].Value}.");
                 ObservedClimate.Initialize();
             }
             SpeciesPnET = new SpeciesPnET();
             Library.PnETCohorts.SpeciesParameters.LoadParameters(SpeciesPnET);
-
             Hydrology.Initialize();
             Library.PnETCohorts.SiteCohorts.Initialize();
             string PARunits = ((Parameter<string>)Names.GetParameter(Names.PARunits)).Value;
             if (PARunits != "umol" && PARunits != "W/m2")
                 throw new Exception("PARunits are not 'umol' or 'W/m2'.");
-<<<<<<< HEAD
+
             // John McNabb: initialize climate library after EcoregionPnET has been initialized
             InitializeClimateLibrary(StartDate.Year); 
-
-            //MG20261014 The following line was not present in PnET-Succession as it
-            //           is in the other Succession Extension PlugIn.cs files (Biomass, 
-            //           NECN, ForC). Could this be part of the problem in maintaining
-            //           connections between PnETCohorts and UniversalCohorts? The call
-            //           is to:
-            //               public static void Initialize(int successionTimeStep,
-            //                                             ICalculator biomassCalculator)
-            //           so the "Timestep" argument seems correct but CohortBiomass()
-            //           is no longer here as in the other Succession extensions, and
-            //           everything connected to the type ICalculator has been moved to
-            //           the PnETCohorts Library. Need to figure out a proper replacement
-            //           for the "CohortBiomass()" argument with the proper type and all
-            //           the attendant variables/methods.
-            //
-            // Cohorts must be created before the base class is initialized
-            // because the base class's reproduction module uses the core's
-            // SuccessionCohorts property in its Initialization method.
-            //
-            // Library.UniversalCohorts.Cohorts.Initialize(Timestep, new CohortBiomass());
-            //
-            //MG20261014 end addition
-            // Library.PnETCohorts.Cohorts.Initialize(Timestep);  //MG20261022 not working like I expected
-            //MG20261019 end addition
-=======
-            InitializeClimateLibrary(StartDate.Year); // John McNabb: initialize climate library after EcoregionPnET has been initialized
->>>>>>> dev
 
             // Initialize Reproduction routines:
             Reproduction.SufficientResources = SufficientResources;
@@ -318,13 +279,9 @@ namespace Landis.Extension.Succession.BiomassPnET
             Reproduction.PlantingEstablish = PlantingEstablish;
             SeedingAlgorithms SeedAlgorithm = (SeedingAlgorithms)Enum.Parse(typeof(SeedingAlgorithms), Names.parameters["SeedingAlgorithm"].Value);
             base.Initialize(ModelCore, SeedAlgorithm);
-    
-            ModelCore.UI.WriteLine("Spinning up biomass or reading from maps...");
-<<<<<<< HEAD
+
             string InitialCommunitiesTxtFile = Names.GetParameter(Names.InitialCommunities).Value;
-=======
-            string InitialCommunitiesTXTFile = Names.GetParameter(Names.InitialCommunities).Value;
->>>>>>> dev
+            ModelCore.UI.WriteLine("Spinning up biomass or reading from maps...");
             string InitialCommunitiesMapFile = Names.GetParameter(Names.InitialCommunitiesMap).Value;
             InitialCommunitiesSpinup = Names.GetParameter(Names.InitialCommunitiesSpinup).Value;
             MinFolRatioFactor = ((Parameter<float>)Names.GetParameter(Names.MinFolRatioFactor,0,float.MaxValue)).Value;
@@ -337,14 +294,17 @@ namespace Landis.Extension.Succession.BiomassPnET
                 MapReader.ReadLitterFromMap(LitterMapFile.Value);
             if (woodyDebrisMapFile)
                 MapReader.ReadWoodyDebrisFromMap(WoodyDebrisMapFile.Value);
+            
+            foreach (ActiveSite site in ModelCore.Landscape)
+            {
+                SiteVars.UniversalCohorts[site] = SiteVars.SiteCohorts[site];
+                if ((SiteVars.SiteCohorts[site] != null) && (SiteVars.UniversalCohorts[site] == null))
+                    throw new Exception("Cannot convert PnET SiteCohorts to biomass site cohorts");
+            }
+            ModelCore.RegisterSiteVar(SiteVars.UniversalCohorts, "Succession.UniversalCohorts");
 
-<<<<<<< HEAD
             //MG20261012 renamed variable PnETCohorts to PnETSiteCohorts to avoid confusion with library name
             ISiteVar<Library.PnETCohorts.SiteCohorts> PnETSiteCohorts = ModelCore.Landscape.NewSiteVar<Library.PnETCohorts.SiteCohorts>();
-=======
-            ISiteVar<SiteCohorts> PnETCohorts = ModelCore.Landscape.NewSiteVar<SiteCohorts>();
->>>>>>> dev
-
             foreach (ActiveSite site in ModelCore.Landscape)
             {
                 //MG20261012 renamed variable PnETCohorts to PnETSiteCohorts to avoid confusion with library name
@@ -356,27 +316,18 @@ namespace Landis.Extension.Succession.BiomassPnET
                 SiteVars.PressureHead[site] = currentPressureHead;
                 SiteVars.FieldCapacity[site] = ecoregion.FieldCap / 10.0f; // cm volume (accounts for rooting depth)
 
-                //MG20261021 TODO the LANDIS Climate Library will soon be the default operation
-                if (UsingClimateLibrary)
+                //MG20260911 this will soon be the default operation, so "if" will be removed
+                if (UsingClimateLibrary)  
                 {
-<<<<<<< HEAD
-                    SiteVars.ExtremeMinTemp[site] = (float)Climate.FutureEcoregionYearClimate[ecoregion.Index][1].MonthlyTemp.Min()
-                                                    - (3.0f * ecoregion.WinterSTD);
-=======
-                    SiteVars.ExtremeMinTemp[site] = (float)Climate.FutureEcoregionYearClimate[ecoregion.Index][1].MonthlyTemp.Min() - (float)(3.0 * ecoregion.WinterSTD);
->>>>>>> dev
-
+                    SiteVars.ExtremeMinTemp[site] = (float)Climate.FutureEcoregionYearClimate[ecoregion.Index][1].MonthlyTemp.Min() 
+                                                    - (float)(3.0 * ecoregion.WinterSTD);  
                     if (((Parameter<bool>)Names.GetParameter(Names.SoilIceDepth)).Value)
                     { 
                         if(SiteVars.MonthlySoilTemp[site].Count() == 0)
                         { 
-<<<<<<< HEAD
                             //MG20260911 all of these calculations and assignments will
                             //           soon be moved to a new Soil Class in the PnET
                             //           Cohort Library
-=======
-                            //MG20260911 All of these calculations and assignments will soon be moved 
-                            //           to a new Soils Class in the PnET Cohort Library.
                             //MG20260914 This code is almost entirely redundant with the Permafrost
                             //           class both here and in PnETCohorts, except for one little
                             //           return variable that is more up-to-date in PnETCohorts. The
@@ -387,7 +338,6 @@ namespace Landis.Extension.Succession.BiomassPnET
                             //           be deprecated and removed.
                             //MG20260922 Call to Permafrost class redirected to PnETCohorts.Soils class.
                             //           Permafrost.cs is now redundant, deprecated, and removed.
->>>>>>> dev
 
                             // Soil calcs for soil temp
                             float waterContent = hydrology.Water;// volumetric m/m
@@ -509,7 +459,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                 else
                     SiteVars.ExtremeMinTemp[site] = 999;
             }
-            // SiteVars.UpdateUniversalCohorts();  //MG20260911 added call 
+            ModelCore.RegisterSiteVar(PnETCohorts, "Succession.CohortsPnET");
         }
 
         /// <summary>
@@ -518,6 +468,7 @@ namespace Landis.Extension.Succession.BiomassPnET
         private void InitializeClimateLibrary(int startYear=0)
         {
             Parameter<string> climateLibraryFileName;
+
             //MG20261021 TODO the LANDIS Climate Library will soon be the default operation
             UsingClimateLibrary = Names.TryGetParameter(Names.ClimateConfigFile, out climateLibraryFileName);
             if (UsingClimateLibrary)
@@ -549,17 +500,13 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
             bool addSiteOutput = false;
             addSiteOutput = SiteOutputNames.ContainsKey(site) && addCohort;
-<<<<<<< HEAD
             Library.PnETCohorts.Cohort cohort = new Library.PnETCohorts.Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, propBiomass, false);  
-=======
-            Cohort cohort = new Cohort(species, spc, (ushort)Date.Year, addSiteOutput ? SiteOutputNames[site] : null, propBiomass, false);
->>>>>>> dev
             if (((Parameter<bool>)Names.GetParameter(Names.CohortStacking)).Value)
             {
                 cohort.CanopyGrowingSpace = 1.0f;
                 cohort.CanopyLayerProp = 1.0f;
             }
-            addCohort = SiteVars.SiteCohorts[site].AddNewCohort(cohort);  
+            addCohort = SiteVars.SiteCohorts[site].AddNewCohort(cohort);
             if (addCohort)
             {
                 if (reproductionType == "plant")
@@ -638,18 +585,12 @@ namespace Landis.Extension.Succession.BiomassPnET
         {
             // Date starts at 1/15/Year
             DateTime date = new DateTime(StartDate.Year + ModelCore.CurrentTime - Timestep, 1, 15);
-<<<<<<< HEAD
             DateTime EndDate = date.AddYears(years);
             IEcoregionPnET ecoregion_pnet = EcoregionData.GetPnETEcoregion(ModelCore.Ecoregion[site]);
-            //MG20261021 TODO resolve climate input path to use LANDIS Climate Library only
-=======
-
-            DateTime EndDate = date.AddYears(years);
-
-            IEcoregionPnET ecoregion_pnet = EcoregionData.GetPnETEcoregion(ModelCore.Ecoregion[site]);
-
->>>>>>> dev
+            
+            //MG20261026 using the Climate Library will soon be the default operation
             List<IEcoregionPnETVariables> climate_vars = UsingClimateLibrary ? EcoregionData.GetClimateRegionData(ecoregion_pnet, date, EndDate) : EcoregionData.GetData(ecoregion_pnet, date, EndDate);
+            
             SiteVars.SiteCohorts[site].Grow(climate_vars);
             SiteVars.SiteCohorts[site].DisturbanceTypesReduced.Clear();
             Date = EndDate;
@@ -666,7 +607,6 @@ namespace Landis.Extension.Succession.BiomassPnET
             if (Timestep > 0)
                 ClimateRegionData.SetAllEcoregionsFutureAnnualClimate(ModelCore.CurrentTime);
             base.Run();
-            // SiteVars.UpdateUniversalCohorts();  //MG20260911 end of PnET operations step, time to update
         }
 
         // Required delegate method to base succession - not used within PnET-Succession
@@ -705,7 +645,6 @@ namespace Landis.Extension.Succession.BiomassPnET
         {
             IInputRaster<UIntPixel> map = ModelCore.OpenRaster<UIntPixel>(initialCommunitiesMap);
             Dictionary<uint, ActiveSite> uniqueKeys = new Dictionary<uint, ActiveSite>();
-
             using (map)
             {
                 UIntPixel pixel = map.BufferPixel;
@@ -715,15 +654,12 @@ namespace Landis.Extension.Succession.BiomassPnET
                     uint mapCode = pixel.MapCode.Value;
                     if (!site.IsActive)
                         continue;
-
                     ActiveSite activeSite = (ActiveSite)site;
                     var initialCommunity = communities.Find(mapCode);
                     if (initialCommunity == null)
                         throw new ApplicationException(string.Format("Unknown map code for initial community: {0}", mapCode));
-
                     sitesAndCommunities.Add(activeSite, initialCommunity);
                     uint key = Library.PnETCohorts.SiteCohorts.ComputeKey((ushort)initialCommunity.MapCode, Globals.ModelCore.Ecoregion[site].MapCode);
-
                     if (!uniqueKeys.ContainsKey(key))
                     {
                         uniqueKeys.Add(key, activeSite);
@@ -737,12 +673,10 @@ namespace Landis.Extension.Succession.BiomassPnET
             }
         }
 
+        // CUSTOM DYNAMIC PARAMETERS GO HERE
         public override void AddCohortData()
         {
-            // CUSTOM DYNAMIC PARAMETERS GO HERE
             return;
         }
     }
 }
-
-

@@ -48,12 +48,9 @@ namespace Landis.Extension.Succession.BiomassPnET
             int ColumnCount = PlugIn.ModelCore.Landscape.Columns;
             float relativecolumnposition = MapCoordinatesX / PlugIn.ModelCore.CellLength - MapCoordinatesMaxX / PlugIn.ModelCore.CellLength;
             int newColumn = (int)(ColumnCount + relativecolumnposition) + 1;
-
             int RowCount = PlugIn.ModelCore.Landscape.Rows;
             int newRow = (int)(Math.Abs((MapCoordinatesMaxY - MapCoordinatesY) / PlugIn.ModelCore.CellLength) + 1);
-
             return new Location(newRow, newColumn);
-
         }
 
         public static Location GetLandisLocation(double[] InputMapLocation, double[] MapTopLeftCorner)
@@ -64,10 +61,8 @@ namespace Landis.Extension.Succession.BiomassPnET
             double coordX = InputMapLocation[0];
             double coordY = InputMapLocation[1];
             float cellSize = PlugIn.ModelCore.CellLength;
-
             int newColumn = (int)(Math.Abs((mapX - coordX) / cellSize) + 1);
             int newRow = (int)(Math.Abs((mapY - coordY) / cellSize) + 1);
-
             return new Location(newRow, newColumn);
         }
 
@@ -84,36 +79,28 @@ namespace Landis.Extension.Succession.BiomassPnET
             foreach (KeyValuePair<string, Parameter<string>> site in outputfiles)
             {
                 Location OutputLocation;
-
                 // If the location parameters are supplied through MapCoordinatesX/MapCoordinatesY
                 if (site.Value.ContainsKey(ParameterNames.MapCoordinatesX) && site.Value.ContainsKey(ParameterNames.MapCoordinatesY))
                 {
                     // Get X location
                     float X = float.Parse(site.Value[ParameterNames.MapCoordinatesX]);
-
                     // Get Y location
                     float Y = float.Parse(site.Value[ParameterNames.MapCoordinatesY]);
-
                     // Get X border
                     float MaxX = float.Parse(site.Value[ParameterNames.MapCoordinatesMaxX]);
-
                     // Get Y border
                     float MaxY = float.Parse(site.Value[ParameterNames.MapCoordinatesMaxY]);
-
-                    if (Y >= MaxY)
+                    if (Y >= MaxY) 
                         throw new Exception("Cannot assign output location, Y coordinate " + Y + " should be larger than MaxY" + MaxY);
-                    if (X >= MaxX)
+                    if (X >= MaxX) 
                         throw new Exception("Cannot assign output location, X coordinate " + X + " should be larger than MaxY" + MaxX);
-
                     OutputLocation = GetLandisLocation(X, Y, MaxX, MaxY);
                 }
                 else
                     OutputLocation = new Location(int.Parse(site.Value[ParameterNames.Row]), int.Parse(site.Value[ParameterNames.Column]));
-
                 // Locate output sites by location
                 List<Landis.SpatialModeling.ActiveSite> outputSites =
                     PlugIn.ModelCore.Landscape.Where(localSite => localSite.Location == OutputLocation).ToList();
-
                 if (outputSites.Count() == 0)
                 {
                     string msg = "Cannot determine location of " + site.Key;
@@ -123,7 +110,7 @@ namespace Landis.Extension.Succession.BiomassPnET
                     throw new Exception(msg);
                 }
                 else
-                    OutputSiteNames.Add(outputSites.First(), site.Key);
+                    OutputSiteNames.Add(outputSites.First(), site.Key);                 
             }
         }
     }

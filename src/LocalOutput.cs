@@ -5,8 +5,8 @@ namespace Landis.Extension.Succession.BiomassPnET
 {
     public class LocalOutput
     {
-        public static string PNEToutputsites;
         private List<string> FileContent;
+        public static string PNEToutputsites;
         public string FileName { get; private set; }
         public string SiteName { get; private set; }
         public string FilePath { get; private set; }
